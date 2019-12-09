@@ -3,6 +3,65 @@ library(DBI)
 library(RSQLite)
 library(readxl)
 
+
+public_grad_files <- list.files(path = "imports/graduation/public")
+
+# Set to NULL because using !exists() doesn't work in for loop
+public_graduation <- NULL
+
+for(file in public_grad_files) {
+  
+  filename <- paste("imports/graduation/public", file, sep = "/")
+  
+  if(is.null("public_graduation")) {
+    
+    public_graduation <- read_csv(filename) %>%
+      filter(!SCHOOL_NAME %in% c("[Districtwide]", "[Statewide]")) %>%
+      mutate(SCHOOL_CODE = str_pad(SCHOOL_CODE, 4, side = "left", pad = "0"),
+             DISTRICT_CODE = str_pad(DISTRICT_CODE, 4, side = "left", pad = "0"),
+             dpi_true_id = paste(DISTRICT_CODE, SCHOOL_CODE, sep = "_"),
+             STUDENT_COUNT = as.numeric(STUDENT_COUNT)) %>%
+      select(school_year = SCHOOL_YEAR, 
+             dpi_true_id, 
+             school_name = SCHOOL_NAME, 
+             agency_type = AGENCY_TYPE,
+             district_name = DISTRICT_NAME, 
+             group_by = GROUP_BY, 
+             charter_indicator = CHARTER_IND,
+             cohort = COHORT,
+             completion_status = COMPLETION_STATUS,
+             timeframe = TIMEFRAME,
+             county = COUNTY, 
+             group_by_value = GROUP_BY_VALUE, 
+             student_count = STUDENT_COUNT,
+             cohort_count = COHORT_COUNT)
+    
+  } else {
+    public_graduation1 <- read_csv(filename) %>%
+      filter(!SCHOOL_NAME %in% c("[Districtwide]", "[Statewide]")) %>%
+      mutate(SCHOOL_CODE = str_pad(SCHOOL_CODE, 4, side = "left", pad = "0"),
+             DISTRICT_CODE = str_pad(DISTRICT_CODE, 4, side = "left", pad = "0"),
+             dpi_true_id = paste(DISTRICT_CODE, SCHOOL_CODE, sep = "_"),
+             STUDENT_COUNT = as.numeric(STUDENT_COUNT)) %>%
+      select(school_year = SCHOOL_YEAR, 
+             dpi_true_id, 
+             school_name = SCHOOL_NAME, 
+             agency_type = AGENCY_TYPE,
+             district_name = DISTRICT_NAME, 
+             group_by = GROUP_BY, 
+             charter_indicator = CHARTER_IND,
+             cohort = COHORT,
+             completion_status = COMPLETION_STATUS,
+             timeframe = TIMEFRAME,
+             county = COUNTY, 
+             group_by_value = GROUP_BY_VALUE, 
+             student_count = STUDENT_COUNT,
+             cohort_count = COHORT_COUNT)
+  }
+  
+  public_graduation <- bind_rows(public_graduation, public_graduation1)
+}
+
 # public file loop ====
 
 public_files <- list.files(path = "imports/enrollment/public")
@@ -699,6 +758,7 @@ if(!dbExistsTable(school_db, "schools")) {
   
 }
 
+dbWriteTable(school_db, "graduation", public_graduation, overwrite = TRUE)
 
 dbWriteTable(school_db, "enrollment", only_enrollment, overwrite = TRUE)
 
@@ -718,13 +778,11 @@ schools <- readRDS("imports/schools.rds")
 enrollment <- readRDS("imports/enrollment.rds")
 report_cards <- readRDS("imports/report_cards.rds")
 forward_exam <- readRDS("imports/forward_exam.rds")
+graduation <- readRDS("imports/graduation.rds")
 
-save(list = c("schools", "enrollment", "report_cards", "forward_exam"),
+save(list = c("schools", "enrollment", "report_cards", "forward_exam", "graduation"),
      file = "C:/Users/Spencer/repor/wisconsink12/data/school_data.RData")
 
 dbDisconnect(school_db)
 
 rm(list = ls())
-
-load("C:/Users/Spencer/repor/wisconsink12/data/school_data.RData")
-
