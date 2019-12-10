@@ -4,4 +4,4 @@ The purpose of this database is to provide easy access to school data across all
 
 This database automates the cleaning and reformatting process, which saves time and increases the integrity of analyses from year to year since the analyst can be certain the same data manipulation is being done from year to year.
 
-The resulting data tables are exported to the [wisconsink12]("github.com/cityforwardcollective/wisconsink12") R package.
+The resulting data tables are exported to the [wisconsink12]("https://github.com/cityforwardcollective/wisconsink12") R package.
