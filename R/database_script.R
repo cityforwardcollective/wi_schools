@@ -589,7 +589,7 @@ for (file in files) {
              group_by = "All Students",
              group_by_value = "All Students") %>%
       modify_at("student_count", as.integer) %>%
-      filter(grade != "Total" & test_group == "Forward" & !str_detect(school_name, "Choice Program")) %>%
+      filter(grade != "Total" & !str_detect(school_name, "Choice Program")) %>%
       select(-c(school_name, enrollment))
   } else {
     
@@ -622,7 +622,7 @@ for (file in files) {
            group_by_value = "All Students") %>%
     modify_at("student_count", as.integer) %>%
     modify_at("group_count", as.integer) %>%
-    filter(grade != "Total" & test_group == "Forward" & !str_detect(school_name, "Choice Program")) %>%
+    filter(grade != "Total" & !str_detect(school_name, "Choice Program")) %>%
     select(-c(school_name, enrollment))
   }
   
@@ -640,6 +640,9 @@ unique_schools <- unique_schools %>%
   mutate(MPCP = ifelse(!is.na(MPCP), 1, 0),
          RPCP = ifelse(!is.na(RPCP), 1, 0),
          WPCP = ifelse(!is.na(WPCP), 1, 0)) 
+
+choice_forward <- choice_forward %>%
+  filter(test_group == "Forward")
 
 
 
@@ -745,43 +748,13 @@ forward_exam <- full_join(public_forward, choice_forward)
 
 school_db <- dbConnect(RSQLite::SQLite(), "school_db.sqlite")
 
-if(!dbExistsTable(school_db, "schools")) {
-  dbSendQuery(school_db,
-              "CREATE TABLE schools (
-    locale_description CHAR,
-    city  CHAR,
-    dpi_true_id  CHAR PRIMARY KEY,
-    school_name  CHAR,
-    agency_type  CHAR,
-    district_name  CHAR,
-    county  CHAR,
-    choice_indicator  BOOLEAN,
-    charter_indicator BOOLEAN,
-    accurate_agency_type  CHAR,
-    last_year_open CHAR,
-    MPCP BOOLEAN,
-    RPCP BOOLEAN,
-    WPCP BOOLEAN
-  )")
-  dbAppendTable(school_db, "schools", unique_schools)
-  
-} else {
-  ids <- dbReadTable(school_db, "schools") %>%
-    select(dpi_true_id)
-  
-  add_schools <- unique_schools %>%
-    filter(!dpi_true_id %in% ids$dpi_true_id)
-  
-  dbAppendTable(school_db, "schools", add_schools)
-  
-}
+dbWriteTable(school_db, "schools", unique_schools, overwrite = TRUE)
 
 dbWriteTable(school_db, "graduation", public_graduation, overwrite = TRUE)
 
 dbWriteTable(school_db, "enrollment", only_enrollment, overwrite = TRUE)
 
 dbWriteTable(school_db, "report_cards", rc_renamed, overwrite = TRUE)
-
 
 dbWriteTable(school_db, "forward_exam", forward_exam, overwrite = TRUE)
 
