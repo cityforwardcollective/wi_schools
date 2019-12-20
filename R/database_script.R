@@ -531,11 +531,14 @@ unique_schools <- left_join(unique_schools, rc1, by = "dpi_true_id")
 files <- list.files(path = "./imports/wsas/private")
 
 # Set to NULL because using !exists() doesn't work in for loop
-choice_forward <- NULL
+choice_forward <- choice1_forward <- NULL
 
 fix_format <- function(x) {
   x <- select(x, -contains("Required"))
   colnames(x) <- c("school_year",
+                   "MPCP",
+                   "RPCP",
+                   "WPCP",
                    "grade",
                    "enrollment",
                    "parent_opt_out",
@@ -548,7 +551,7 @@ fix_format <- function(x) {
                    "school_name")
   
   x <- x %>%
-    mutate_at(6:9, as.integer) %>%
+    mutate_at(9:12, as.integer) %>%
     mutate(group_count = `Below Basic` + Basic + Proficient + Advanced) %>%
     gather(key = "test_result", value = "student_count", `Below Basic`:Advanced)
 }
@@ -557,7 +560,7 @@ for (file in files) {
   
   filename <- paste("imports/wsas/private", file, sep = "/")
   
-  if(is.null("choice_forward")) {
+  if(length(choice_forward) == 0) {
     raw_choice <- read_xlsx(filename, "Opt Out Not Included", skip = 1, col_names = TRUE)
     
     raw_choice <- raw_choice %>% select(-contains("%")) %>%
@@ -566,10 +569,10 @@ for (file in files) {
              school_name = ifelse(!str_detect(raw_choice$`School Name and Number`, "-|\\("), raw_choice$`School Name and Number`,
                                   str_replace(str_extract(raw_choice$`School Name and Number`, ".*-|.*\\("), "-|\\(", "")))
     
-    choice_ela <- raw_choice[, c(1, 6:14, 39:40)]
-    choice_math <- raw_choice[, c(1, 6, 15:22, 39:40)]
-    choice_ss <- raw_choice[, c(1, 6, 23:30, 39:40)]
-    choice_science <- raw_choice[, c(1, 6, 31:40)]
+    choice_ela <- raw_choice[, c(1, 3:14, 39:40)]
+    choice_math <- raw_choice[, c(1, 3:6, 15:22, 39:40)]
+    choice_ss <- raw_choice[, c(1, 3:6, 23:30, 39:40)]
+    choice_science <- raw_choice[, c(1, 3:6, 31:40)]
     
     choice_subjects <- list(ELA = choice_ela, Mathematics = choice_math, Science = choice_science, "Social Studies" = choice_ss)
     
@@ -588,9 +591,9 @@ for (file in files) {
       modify_at("student_count", as.integer) %>%
       filter(grade != "Total" & test_group == "Forward" & !str_detect(school_name, "Choice Program")) %>%
       select(-c(school_name, enrollment))
-  }
-  
-  else {raw_choice1 <- read_xlsx(filename, "Opt Out Not Included", skip = 1, col_names = TRUE)
+  } else {
+    
+  raw_choice1 <- read_xlsx(filename, "Opt Out Not Included", skip = 1, col_names = TRUE)
   
   raw_choice1 <- raw_choice1 %>% select(-contains("%")) %>%
     mutate(dpi_true_id = str_replace_all(str_extract(raw_choice1$`School Name and Number`, "\\(.*\\)$"), "\\(|\\)", ""),
@@ -598,10 +601,10 @@ for (file in files) {
            school_name = ifelse(!str_detect(raw_choice1$`School Name and Number`, "-|\\("), raw_choice1$`School Name and Number`,
                                 str_replace(str_extract(raw_choice1$`School Name and Number`, ".*-|.*\\("), "-|\\(", "")))
   
-  choice1_ela <- raw_choice1[, c(1, 6:14, 39:40)]
-  choice1_math <- raw_choice1[, c(1, 6, 15:22, 39:40)]
-  choice1_ss <- raw_choice1[, c(1, 6, 23:30, 39:40)]
-  choice1_science <- raw_choice1[, c(1, 6, 31:40)]
+  choice1_ela <- raw_choice1[, c(1, 3:14, 39:40)]
+  choice1_math <- raw_choice1[, c(1, 3:6, 15:22, 39:40)]
+  choice1_ss <- raw_choice1[, c(1, 3:6, 23:30, 39:40)]
+  choice1_science <- raw_choice1[, c(1, 3:6, 31:40)]
   
   choice1_subjects <- list(ELA = choice1_ela, Mathematics = choice1_math, Science = choice1_science, "Social Studies" = choice1_ss)
   
@@ -627,6 +630,18 @@ for (file in files) {
   choice_forward <- bind_rows(choice_forward, choice1_forward)
   
 }
+
+choice_program <- choice_forward %>%
+  select(school_year:WPCP, dpi_true_id) %>%
+  unique()
+
+unique_schools <- unique_schools %>%
+  left_join(., choice_program, by = c("last_year_open" = "school_year", "dpi_true_id")) %>%
+  mutate(MPCP = ifelse(!is.na(MPCP), 1, 0),
+         RPCP = ifelse(!is.na(RPCP), 1, 0),
+         WPCP = ifelse(!is.na(WPCP), 1, 0)) 
+
+
 
 files <- list.files(path = "./imports/wsas/public")
 
@@ -743,7 +758,10 @@ if(!dbExistsTable(school_db, "schools")) {
     choice_indicator  BOOLEAN,
     charter_indicator BOOLEAN,
     accurate_agency_type  CHAR,
-    last_year_open CHAR
+    last_year_open CHAR,
+    MPCP BOOLEAN,
+    RPCP BOOLEAN,
+    WPCP BOOLEAN
   )")
   dbAppendTable(school_db, "schools", unique_schools)
   
