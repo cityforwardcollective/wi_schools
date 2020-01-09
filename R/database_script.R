@@ -590,7 +590,7 @@ for (file in files) {
              group_by_value = "All Students") %>%
       modify_at("student_count", as.integer) %>%
       filter(grade != "Total" & !str_detect(school_name, "Choice Program")) %>%
-      select(-c(school_name, enrollment))
+      select(-c(enrollment))
   } else {
     
   raw_choice1 <- read_xlsx(filename, "Opt Out Not Included", skip = 1, col_names = TRUE)
@@ -623,7 +623,7 @@ for (file in files) {
     modify_at("student_count", as.integer) %>%
     modify_at("group_count", as.integer) %>%
     filter(grade != "Total" & !str_detect(school_name, "Choice Program")) %>%
-    select(-c(school_name, enrollment))
+    select(-c(enrollment))
   }
   
   
@@ -766,9 +766,15 @@ for(i in 1:length(tables)) {
 }
 
 schools <- readRDS("imports/schools.rds")
+
 enrollment <- readRDS("imports/enrollment.rds")
+
 report_cards <- readRDS("imports/report_cards.rds")
+attr(report_cards, "source") <- "School Report Card Data Download File: https://apps2.dpi.wi.gov/reportcards/"
+attr(report_cards, "data_dictionary") <- read_csv("rc_data_dict.csv")
+
 forward_exam <- readRDS("imports/forward_exam.rds")
+
 graduation <- readRDS("imports/graduation.rds")
 
 save(list = c("schools", "enrollment", "report_cards", "forward_exam", "graduation"),

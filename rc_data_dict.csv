@@ -1,0 +1,51 @@
+variable,description,data_transformation
+school_year,School year.,None
+dpi_true_id,Unique school identifier,Concatenation of the District and School ID designated by DPI.  Private Schools are given the District ID of '0000'.
+district_name,School district name,None
+school_name,School name,None
+overall_score,School Report Card Overall Score,None
+overall_rating,School Report Card Overall Rating,None
+lowest_grade,Lowest grade served by the school,None
+highest_grade,Highest grade served by the school,None
+grade_band,Grade band for comparison schools,None
+school_type,"School type (e.g. Elementary, High School, etc.)",None
+school_enrollment,School enrollment,None
+district_enrollment,District enrollment,None
+per_am_in,Percent American Indian or Alaskan Native students,None
+per_asian,Percent Asian students,None
+per_b_aa,Percent black or African American students,None
+per_hisp_lat,Percent Hispanic or Latino students,None
+per_nh_opi,Percent native Hawaiian or other Pacific Islander students,None
+per_white,Percent White not Hispanic students,None
+per_tom,Percent two or more races,None
+per_swd,Percent students with disabilities,None
+per_ed,Percent economically disadvantaged students,None
+per_lep,Percent limited English proficient students,None
+per_choice,Percent students attending under the choice program,None
+per_open,Percent students attending under open enrollment,None
+sch_ach,School Student Achievement Score,None
+sch_ela_ach,School Student Achievement ELA Component Score,None
+sch_math_ach,School Student Achievement Math Component Score,None
+sch_growth,School Student Growth Score,None
+sch_ela_growth,School Student Growth ELA Component Score,None
+sch_math_growth,School Student Growth Math Component Score,None
+sch_cg,School Closing Gaps Score,None
+sch_ela_cg,School Closing Gaps ELA Component Score,None
+sch_math_cg,School Closing Gaps Math Conponent Score,None
+sch_4y_grad_gap,School 4 Year Graduation Gap Score,None
+sch_6y_grad_gap,School 6 Year Graduation Gap Score,None
+sch_grad_gap,School Graduation Gap Score,None
+sch_ot,School On-Track and Postsecondary Readiness Score,None
+sch_grad_rate,School Graduation Rate Score,None
+sch_att_rate,School Attendance Rate Score,None
+sch_3rd_ela,School Third-Grade ELA Achievement Score,None
+sch_8th_math,School Eighth-Grade Math Achievement Score,None
+ach_weight,Score weighting Achievement Priority Area,None
+growth_weight,Score weighting Growth Priotity Area,None
+cg_weight,Score weighting Closing Gaps Priority Area,None
+ot_weight,Score weighting On-Track Priority Area,None
+locale_description,Locale description,None
+city,City,None
+report_card_type,"Specifies between Public - All Students, Private - Choice Students, or Private - All Students",None
+cg_redacted,Designates whether the School Closing Gaps score was removed in 2018-19 due to fluctuation from previous year greater than twenty points,Boolean determined by presence of '*' in School Closing Gaps Score
+has_2_rc,Designates whether private school has only a Choice Students Report Card or also has an All Students Report Card,Boolean determined by presence of more than one Report Card for a school in a year

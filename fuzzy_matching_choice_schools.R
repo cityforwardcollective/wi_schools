@@ -29,5 +29,4 @@ for(i in 1:nrow(choice)) {
 }
 
     
-
 sum(is.na(choice$guess))
