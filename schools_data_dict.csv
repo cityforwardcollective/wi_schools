@@ -1,0 +1,15 @@
+variable,description,data_transformation,data_source
+dpi_true_id,Unique school identifier,Concatenation of the District and School ID designated by DPI.  Private Schools are given the District ID of '0000'.,
+school_name,School name,,Enrollment data download files
+agency_type,,,
+district_name,,,
+county,,,
+choice_indicator,,,
+charter_indicator,,,
+last_year_open,,,
+accurate_agency_type,,,
+locale_description,,,
+city,city,,
+MPCP,Milwaukee Parental Choice Program Indicator,,
+RPCP,Racine Parental Choice Program Indicator,,
+WPCP,Wisconsin Parental Choice Program Indicator,,
