@@ -222,11 +222,14 @@ unique_schools <- unique_schools_ly %>%
          last_year_open) %>%
   unique() %>%
   mutate(choice_indicator = ifelse(is.na(choice_indicator), 0, choice_indicator),
-         accurate_agency_type = ifelse(agency_type == "Non District Charter Schools", "2r/2x",
+         accurate_agency_type = ifelse(agency_type == "Non District Charter Schools", "2r/2x Charter",
                                        ifelse(agency_type == "Private school", "Private",
                                               ifelse(dpi_true_id %in% instrumentality, "Instrumentality Charter",
                                                      ifelse(agency_type == "Public school" & charter_indicator == 1, "Non-Instrumentality Charter",
-                                                            "Traditional Public School")))))
+                                                            "Traditional Public")))),
+         broad_agency_type = ifelse(accurate_agency_type %in% c("2r/2x Charter", "Non-Instrumentality Charter"), "Independent Charter",
+                                    ifelse(accurate_agency_type == "Private", "Private",
+                                           "District-Run")))
 
 
 # Create vector of files in the folder
@@ -763,11 +766,43 @@ for(file in files) {
 forward_exam <- full_join(public_forward, choice_forward) %>%
   select(-c(MPCP, RPCP, WPCP, school_name))
 
+# Choice Counts ====
+
+choice_names <- read_csv("imports/choice_names.csv")
+
+files <- list.files(path = "./imports/choice_counts")
+
+choice_counts <- NULL
+
+for(file in files) {
+  
+  filename <- paste("imports/choice_counts", file, sep = "/")
+  
+  cc <- readxl::read_xls(filename, skip = 4) %>%
+    filter(!is.na(`...1`)) %>%
+    select("school_name" = `School Name`,
+           "MPCP_count" = `MPCP Student HC`,
+           "RPCP_count" = `RPCP Student HC`,
+           "WPCP_count" = `WPCP \nStudent HC`,
+           "SNSP_count" = `SNSP Student HC`) %>%
+    left_join(., choice_names, by = "school_name") %>%
+    mutate(school_year = substr(file, 1, 7))
+  
+  choice_counts <- bind_rows(choice_counts, cc)
+}
+
+
+
+
+
+
 rc_renamed <- rc_renamed %>%
   select(-c(school_name,
             district_name,
             locale_description,
             city))
+
+
 
 school_db <- dbConnect(RSQLite::SQLite(), "school_db.sqlite")
 
@@ -780,6 +815,8 @@ dbWriteTable(school_db, "enrollment", only_enrollment, overwrite = TRUE)
 dbWriteTable(school_db, "report_cards", rc_renamed, overwrite = TRUE)
 
 dbWriteTable(school_db, "forward_exam", forward_exam, overwrite = TRUE)
+
+dbWriteTable(school_db, "choice_counts", choice_counts, overwrite = TRUE)
 
 tables <- dbListTables(school_db)
 
@@ -800,7 +837,9 @@ forward_exam <- readRDS("imports/forward_exam.rds")
 
 graduation <- readRDS("imports/graduation.rds")
 
-save(list = c("schools", "enrollment", "report_cards", "forward_exam", "graduation"),
+choice_counts <- readRDS("imports/choice_counts.rds")
+
+save(list = c("schools", "enrollment", "report_cards", "forward_exam", "graduation", "choice_counts"),
      file = "C:/Users/Spencer/repor/wisconsink12/data/school_data.RData")
 
 dbDisconnect(school_db)
