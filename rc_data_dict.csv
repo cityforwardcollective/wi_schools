@@ -1,8 +1,6 @@
 variable,description,data_transformation
 school_year,School year.,None
 dpi_true_id,Unique school identifier,Concatenation of the District and School ID designated by DPI.  Private Schools are given the District ID of '0000'.
-district_name,School district name,None
-school_name,School name,None
 overall_score,School Report Card Overall Score,None
 overall_rating,School Report Card Overall Rating,None
 lowest_grade,Lowest grade served by the school,None
@@ -44,8 +42,6 @@ ach_weight,Score weighting Achievement Priority Area,None
 growth_weight,Score weighting Growth Priotity Area,None
 cg_weight,Score weighting Closing Gaps Priority Area,None
 ot_weight,Score weighting On-Track Priority Area,None
-locale_description,Locale description,None
-city,City,None
 report_card_type,"Specifies between Public - All Students, Private - Choice Students, or Private - All Students",None
 cg_redacted,Designates whether the School Closing Gaps score was removed in 2018-19 due to fluctuation from previous year greater than twenty points,Boolean determined by presence of '*' in School Closing Gaps Score
 has_2_rc,Designates whether private school has only a Choice Students Report Card or also has an All Students Report Card,Boolean determined by presence of more than one Report Card for a school in a year

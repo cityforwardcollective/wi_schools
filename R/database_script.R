@@ -23,15 +23,11 @@ for(file in public_grad_files) {
              STUDENT_COUNT = as.numeric(STUDENT_COUNT)) %>%
       select(school_year = SCHOOL_YEAR, 
              dpi_true_id, 
-             school_name = SCHOOL_NAME, 
-             agency_type = AGENCY_TYPE,
              district_name = DISTRICT_NAME, 
              group_by = GROUP_BY, 
-             charter_indicator = CHARTER_IND,
              cohort = COHORT,
              completion_status = COMPLETION_STATUS,
              timeframe = TIMEFRAME,
-             county = COUNTY, 
              group_by_value = GROUP_BY_VALUE, 
              student_count = STUDENT_COUNT,
              cohort_count = COHORT_COUNT)
@@ -45,15 +41,11 @@ for(file in public_grad_files) {
              STUDENT_COUNT = as.numeric(STUDENT_COUNT)) %>%
       select(school_year = SCHOOL_YEAR, 
              dpi_true_id, 
-             school_name = SCHOOL_NAME, 
-             agency_type = AGENCY_TYPE,
              district_name = DISTRICT_NAME, 
              group_by = GROUP_BY, 
-             charter_indicator = CHARTER_IND,
              cohort = COHORT,
              completion_status = COMPLETION_STATUS,
              timeframe = TIMEFRAME,
-             county = COUNTY, 
              group_by_value = GROUP_BY_VALUE, 
              student_count = STUDENT_COUNT,
              cohort_count = COHORT_COUNT)
@@ -81,9 +73,17 @@ for(file in public_files) {
              dpi_true_id = paste(DISTRICT_CODE, SCHOOL_CODE, sep = "_"),
              STUDENT_COUNT = as.numeric(STUDENT_COUNT),
              choice_identifier = "") %>%
-      select(school_year = SCHOOL_YEAR, dpi_true_id, school_name = SCHOOL_NAME, agency_type = AGENCY_TYPE,
-             district_name = DISTRICT_NAME, group_by = GROUP_BY, charter_indicator = CHARTER_IND,
-             county = COUNTY, group_by_value = GROUP_BY_VALUE, student_count = STUDENT_COUNT, choice_identifier)
+      select(school_year = SCHOOL_YEAR, 
+             dpi_true_id,
+             school_name = SCHOOL_NAME, 
+             agency_type = AGENCY_TYPE,
+             district_name = DISTRICT_NAME, 
+             group_by = GROUP_BY, 
+             charter_indicator = CHARTER_IND,
+             county = COUNTY, 
+             group_by_value = GROUP_BY_VALUE, 
+             student_count = STUDENT_COUNT, 
+             choice_identifier)
     
   } else {
     public_enrollment1 <- read_csv(filename) %>%
@@ -92,9 +92,17 @@ for(file in public_files) {
              dpi_true_id = paste(DISTRICT_CODE, SCHOOL_CODE, sep = "_"),
              STUDENT_COUNT = as.numeric(STUDENT_COUNT),
              choice_identifier = "") %>%
-      select(school_year = SCHOOL_YEAR, dpi_true_id, school_name = SCHOOL_NAME, agency_type = AGENCY_TYPE,
-             district_name = DISTRICT_NAME, group_by = GROUP_BY, charter_indicator = CHARTER_IND,
-             county = COUNTY, group_by_value = GROUP_BY_VALUE, student_count = STUDENT_COUNT, choice_identifier)
+      select(school_year = SCHOOL_YEAR, 
+             dpi_true_id, 
+             school_name = SCHOOL_NAME, 
+             agency_type = AGENCY_TYPE,
+             district_name = DISTRICT_NAME, 
+             group_by = GROUP_BY, 
+             charter_indicator = CHARTER_IND,
+             county = COUNTY, 
+             group_by_value = GROUP_BY_VALUE, 
+             student_count = STUDENT_COUNT, 
+             choice_identifier)
   }
   
   public_enrollment <- bind_rows(public_enrollment, public_enrollment1)
@@ -193,6 +201,14 @@ instrumentality <- c("3619_0162",
                      "3619_0165",
                      "3619_0398")
 
+partnership <- c("3619_1063",
+                 "3619_0432",
+                 "3619_0410",
+                 "3619_0296",
+                 "3619_1072",
+                 "3619_1074",
+                 "3619_1086")
+
 unique_schools_ly <- all_enrollment %>%
   modify_at("school_year", factor, ordered = TRUE) %>%
   group_by(dpi_true_id) %>%
@@ -206,10 +222,10 @@ unique_schools <- unique_schools_ly %>%
          last_year_open) %>%
   unique() %>%
   mutate(choice_indicator = ifelse(is.na(choice_indicator), 0, choice_indicator),
-         accurate_agency_type = ifelse(agency_type == "Non District Charter Schools", "Independent Charter",
-                                       ifelse(agency_type == "Private school", "Private School",
-                                              ifelse(dpi_true_id %in% instrumentality, "Instrumentality",
-                                                     ifelse(agency_type == "Public school" & charter_indicator == 1, "Independent Charter",
+         accurate_agency_type = ifelse(agency_type == "Non District Charter Schools", "2r/2x",
+                                       ifelse(agency_type == "Private school", "Private",
+                                              ifelse(dpi_true_id %in% instrumentality, "Instrumentality Charter",
+                                                     ifelse(agency_type == "Public school" & charter_indicator == 1, "Non-Instrumentality Charter",
                                                             "Traditional Public School")))))
 
 
@@ -528,6 +544,8 @@ rc1 <- rc_renamed %>%
 
 unique_schools <- left_join(unique_schools, rc1, by = "dpi_true_id")
 
+# Forward Exam ====
+
 files <- list.files(path = "./imports/wsas/private")
 
 # Set to NULL because using !exists() doesn't work in for loop
@@ -742,9 +760,14 @@ for(file in files) {
   public_forward <- bind_rows(public_forward, public1_forward)
 }
 
-forward_exam <- full_join(public_forward, choice_forward)
+forward_exam <- full_join(public_forward, choice_forward) %>%
+  select(-c(MPCP, RPCP, WPCP, school_name))
 
-
+rc_renamed <- rc_renamed %>%
+  select(-c(school_name,
+            district_name,
+            locale_description,
+            city))
 
 school_db <- dbConnect(RSQLite::SQLite(), "school_db.sqlite")
 
