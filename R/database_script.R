@@ -5,11 +5,14 @@ library(readxl)
 
 
 # CHAPTER 220 ====
+# Uses Sept. Numbers
 
 school_year <- c("2015-16", "2016-17", "2017-18", "2018-19")
-mke_out_sept <- c(1266 , 1038, 842, 672)
+total_enrollment <- c(1266 , 1038, 842, 672)
 
-chapter_220 <- tibble(school_year, mke_out_sept)
+chapter_220 <- tibble(school_year, total_enrollment, 
+                      accurate_agency_type = "Chapter 220",
+                      broad_agency_type = "Open Enrollment/Chapter 220") 
 
 # OPEN ENROLLMENT ====
 
@@ -49,6 +52,13 @@ for(file in oe_files) {
 
 open_enrollment <- open_enrollment %>%
   select(-c(1, 11))
+
+mke_oe <- open_enrollment %>%
+  filter(district_code == 3619) %>%
+  select(school_year, pupil_transfers_out) %>%
+  rename("total_enrollment" = pupil_transfers_out) %>%
+  mutate(accurate_agency_type = "Open Enrollment",
+         broad_agency_type = "Open Enrollment/Chapter 220")
 
 # GRADUATION ====
 
@@ -839,18 +849,23 @@ for(file in files) {
   choice_counts <- bind_rows(choice_counts, cc)
 }
 
+mobile_students <- rc_renamed %>%
+  filter(district_name == "Milwaukee") %>%
+  group_by(school_year, district_enrollment) %>%
+  summarise(total_enrollment = sum(school_enrollment, na.rm = TRUE)) %>%
+  mutate(total_enrollment = district_enrollment - total_enrollment,
+         accurate_agency_type = "Mobile Students",
+         broad_agency_type = "District-Run") %>%
+  select(-district_enrollment)
 
 
-
-
+other_enrollment <- bind_rows(mobile_students, mke_oe, chapter_220)
 
 rc_renamed <- rc_renamed %>%
   select(-c(school_name,
             district_name,
             locale_description,
             city))
-
-
 
 school_db <- dbConnect(RSQLite::SQLite(), "school_db.sqlite")
 
@@ -866,9 +881,7 @@ dbWriteTable(school_db, "forward_exam", forward_exam, overwrite = TRUE)
 
 dbWriteTable(school_db, "choice_counts", choice_counts, overwrite = TRUE)
 
-dbWriteTable(school_db, "open_enrollment", open_enrollment, overwrite = TRUE)
-
-dbWriteTable(school_db, "chapter_220", chapter_220, overwrite = TRUE)
+dbWriteTable(school_db, "other_enrollment", other_enrollment, overwrite = TRUE)
 
 tables <- dbListTables(school_db)
 
@@ -891,11 +904,9 @@ graduation <- readRDS("imports/graduation.rds")
 
 choice_counts <- readRDS("imports/choice_counts.rds")
 
-open_enrollment <- readRDS("imports/open_enrollment.rds")
+other_enrollment <- readRDS("imports/other_enrollment.rds")
 
-chapter_220 <- readRDS("imports/chapter_220.rds")
-
-save(list = c("schools", "enrollment", "report_cards", "forward_exam", "graduation", "choice_counts", "open_enrollment", "chapter_220"),
+save(list = c("schools", "enrollment", "report_cards", "forward_exam", "graduation", "choice_counts", "other_enrollment"),
      file = "C:/Users/Spencer/repor/wisconsink12/data/school_data.RData")
 
 dbDisconnect(school_db)
