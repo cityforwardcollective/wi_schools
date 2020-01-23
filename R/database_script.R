@@ -844,7 +844,8 @@ for(file in files) {
            "WPCP_count" = `WPCP \nStudent HC`,
            "SNSP_count" = `SNSP Student HC`) %>%
     left_join(., choice_names, by = "school_name") %>%
-    mutate(school_year = substr(file, 1, 7))
+    mutate(school_year = substr(file, 1, 7)) %>%
+    select(-c(MPCP, RPCP, WPCP, SNSP))
   
   choice_counts <- bind_rows(choice_counts, cc)
 }
