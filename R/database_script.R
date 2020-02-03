@@ -283,8 +283,9 @@ unique_schools <- unique_schools_ly %>%
          accurate_agency_type = ifelse(agency_type == "Non District Charter Schools", "2r/2x Charter",
                                        ifelse(agency_type == "Private school", "Private",
                                               ifelse(dpi_true_id %in% instrumentality, "Instrumentality Charter",
-                                                     ifelse(agency_type == "Public school" & charter_indicator == 1, "Non-Instrumentality Charter",
-                                                            "Traditional Public")))),
+                                                     ifelse(dpi_true_id %in% partnership, "Partnership",
+                                                            ifelse(agency_type == "Public school" & charter_indicator == 1, "Non-Instrumentality Charter",
+                                                                   "Traditional Public"))))),
          broad_agency_type = ifelse(accurate_agency_type %in% c("2r/2x Charter", "Non-Instrumentality Charter"), "Independent Charter",
                                     ifelse(accurate_agency_type == "Private", "Private",
                                            "District-Run")))
