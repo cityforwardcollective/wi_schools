@@ -920,11 +920,28 @@ for (file in files) {
 
 choice_act <- choice_act %>%
   modify_at(c("score", "count"), as.numeric) %>%
-  modify_at("score", round, 1)
+  modify_at("score", round, 1) %>%
+  rename("test_subject" = subject,
+         "student_count" = count,
+         "average_score" = score) %>%
+  mutate(group_by = "All Students",
+         group_by_value = "All Students",
+         test_group = "ACT",
+         test_subject = ifelse(test_subject == "composite", "Composite",
+                               ifelse(test_subject == "ela", "ELA",
+                                      ifelse(test_subject == "math", "Mathematics",
+                                             ifelse(test_subject == "science", "Science", test_subject)))),
+         test_result = ifelse(average_score >= 28, "Advanced",
+                              ifelse(test_subject == "ELA" & average_score >= 20, "Proficient",
+                                     ifelse(test_subject == "ELA" & average_score >= 15, "Basic",
+                                            ifelse(test_subject == "Mathematics" & average_score >= 22, "Proficient",
+                                                   ifelse(test_subject == "Mathematics" & average_score >= 17, "Basic",
+                                                          ifelse(test_subject == "Science" & average_score >= 23, "Proficient",
+                                                                 ifelse(test_subject == "Science" & average_score >= 18, "Basic",
+                                                                        ifelse(test_subject == "Composite", "Not Benchmarked", "Below Basic")))))))))
 
 # Public ACT ====
 
-library(tidyverse)
 files <- list.files(path = "./imports/wsas/public_act")
 
 # Set to NULL because using !exists() doesn't work in for loop
@@ -952,8 +969,7 @@ for(file in files) {
              group_by,
              group_by_value,
              average_score,
-             student_count,
-             group_count) %>%
+             student_count) %>%
       modify_at(c("group_count", "student_count"), as.numeric)
     
   } else {
@@ -974,14 +990,16 @@ for(file in files) {
              group_by,
              group_by_value,
              average_score,
-             student_count,
-             group_count) %>%
+             student_count) %>%
       modify_at(c("group_count", "student_count"), as.numeric)
   }
   
   
   public_act <- bind_rows(public_act, public_act1)
 }
+
+public_act$average_score <- as.numeric(public_act$average_score)
+act <- bind_rows(public_act, choice_act)
 
 # Choice Counts ====
 
@@ -1039,7 +1057,7 @@ dbWriteTable(school_db, "report_cards", rc_renamed, overwrite = TRUE)
 
 dbWriteTable(school_db, "forward_exam", forward_exam, overwrite = TRUE)
 
-dbWriteTable(school_db, "act", choice_act, overwrite = TRUE)
+dbWriteTable(school_db, "act", act, overwrite = TRUE)
 
 dbWriteTable(school_db, "choice_counts", choice_counts, overwrite = TRUE)
 
