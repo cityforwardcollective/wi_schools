@@ -288,7 +288,7 @@ unique_schools <- unique_schools_ly %>%
                                                                    "Traditional Public"))))),
          broad_agency_type = ifelse(accurate_agency_type %in% c("2r/2x Charter", "Non-Instrumentality Charter"), "Independent Charter",
                                     ifelse(accurate_agency_type == "Private", "Private",
-                                           "District-Run")))
+                                           "District-Operated")))
 
 
 # Create vector of files in the folder
@@ -1033,7 +1033,7 @@ mobile_students <- rc_renamed %>%
   summarise(total_enrollment = sum(school_enrollment, na.rm = TRUE)) %>%
   mutate(total_enrollment = district_enrollment - total_enrollment,
          accurate_agency_type = "Mobile Students",
-         broad_agency_type = "District-Run") %>%
+         broad_agency_type = "District-Operated") %>%
   select(-district_enrollment)
 
 
