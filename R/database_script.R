@@ -7,8 +7,8 @@ library(readxl)
 # CHAPTER 220 ====
 # Uses Sept. Numbers
 
-school_year <- c("2015-16", "2016-17", "2017-18", "2018-19")
-total_enrollment <- c(1266 , 1038, 842, 672)
+school_year <- c("2015-16", "2016-17", "2017-18", "2018-19", "2019-20")
+total_enrollment <- c(1266 , 1038, 842, 672, NA)
 
 chapter_220 <- tibble(school_year, total_enrollment, 
                       accurate_agency_type = "Chapter 220",
@@ -257,7 +257,8 @@ instrumentality <- c("3619_0162",
                      "3619_0413",
                      "3619_0334",
                      "3619_0165",
-                     "3619_0398")
+                     "3619_0398",
+                     "3619_0454")
 
 partnership <- c("3619_1063",
                  "3619_0432",
