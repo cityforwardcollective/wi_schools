@@ -23,7 +23,7 @@ The `report_cards` table contains data made available through DPI's [School Repo
 
 ## Dictionary
 
-The table below contains the data dictionary for the `report_cards` table.  This dictionary is also provided in CSV form in this folder (raw here).
+The table below contains the data dictionary for the `report_cards` table.  This dictionary is also provided in CSV form in this folder ([raw here](https://raw.githubusercontent.com/cityforwardcollective/wi_schools/master/data_dictionaries/report_cards/report_cards_data_dictionary.csv)).
 
 ```{r report_cards_dictionary}
 dict <- read_csv("report_cards_data_dictionary.csv")
