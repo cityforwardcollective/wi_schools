@@ -1,0 +1,28 @@
+---
+title: "Schools Table Data Dictionary"
+author: "Spencer Schien"
+date: "Last updated `r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+library(wisconsink12)
+library(tidyverse)
+library(knitr)
+```
+
+## Description
+
+The `schools` table is perhaps the most useful table in the `wisconsink12` database because it pulls data from several different publicly available reports and a incorporates a few custom business rules to categorize schools in a meaningful way that facilitates analysis.
+
+## Dictionary
+
+The table below contains the data dictionary for the `schools` table.  This dictionary is also provided in CSV form in this folder ([raw here](https://raw.githubusercontent.com/cityforwardcollective/wi_schools/master/data_dictionaries/schools/schools_data_dictionary.csv)).
+
+```{r schools_dictionary}
+dict <- read_csv("schools_data_dictionary.csv")
+
+dict %>%
+  kable(booktabs = T)
+```

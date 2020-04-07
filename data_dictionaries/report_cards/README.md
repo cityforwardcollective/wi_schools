@@ -30,13 +30,6 @@ The table below contains the data dictionary for the `report_cards`
 table. This dictionary is also provided in CSV form in this folder ([raw
 here](https://raw.githubusercontent.com/cityforwardcollective/wi_schools/master/data_dictionaries/report_cards/report_cards_data_dictionary.csv)).
 
-``` r
-dict <- read_csv("report_cards_data_dictionary.csv")
-
-dict %>%
-  kable(booktabs = T)
-```
-
 | variable             | description                                                                                                                              | data\_transformation                                                                                                |
 | :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
 | school\_year         | School year.                                                                                                                             | None                                                                                                                |

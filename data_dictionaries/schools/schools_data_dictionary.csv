@@ -1,15 +1,16 @@
 variable,description,data_transformation,data_source
-dpi_true_id,Unique school identifier,Concatenation of the District and School ID designated by DPI.  Private Schools are given the District ID of '0000'.,
-school_name,School name,,Enrollment data download files
-agency_type,,,
-district_name,,,
-county,,,
-choice_indicator,,,
-charter_indicator,,,
-last_year_open,,,
-accurate_agency_type,,,
-locale_description,,,
-city,city,,
-MPCP,Milwaukee Parental Choice Program Indicator,,
-RPCP,Racine Parental Choice Program Indicator,,
-WPCP,Wisconsin Parental Choice Program Indicator,,
+dpi_true_id,Unique school identifier,Concatenation of the District and School ID designated by DPI.  Private Schools are given the District ID of '0000'.,All sources
+school_name,School name,None,Enrollment data download files
+agency_type,Agency type as designated by DPI,None,Public enrollment data download file (all private schools are marked as Private)
+district_name,District name,None,Public enrollment data download file
+county,County,None,Public enrollment data download file
+choice_indicator,Choice program participation indicatory,True if the school is a participant of any of Wisconsin's Parental Choice Programs,Enrollment data download files
+charter_indicator,Charter indicator,None,Enrollment data download files
+last_year_open,Last year the school was open,"Last year for which data was reported on the school (in some cases a school will change it's code, resulting in a ""closing"" per the database but not in reality)",
+accurate_agency_type,"Granular description of the agency type of the school, using more meaningful categories than the agency_type variable",Logical expressions used in conjunction with manual coding of Instrumentality and Partnership schools; may not be accurate for all schools outside of Milwaukee,Enrollment data download files
+broad_agency_type,"Broader description of the agency type of the school, primarily designating the operator",Logical expressions used in conjunction with manual coding of Instrumentality and Partnership schools; may not be accurate for all schools outside of Milwaukee,Enrollment data download files
+locale_description,Locale description,None,Report Card data download file
+city,City,None,Report Card data download file
+MPCP,Milwaukee Parental Choice Program Indicator,True if the school is a participant of any of Milwaukee Parental Choice Program,Choice program school enrollment and estimated payment reports 
+RPCP,Racine Parental Choice Program Indicator,True if the school is a participant of any of Racine Parental Choice Program,Choice program school enrollment and estimated payment reports 
+WPCP,Wisconsin Parental Choice Program Indicator,True if the school is a participant of any of Wisconsin Parental Choice Program,Choice program school enrollment and estimated payment reports 
