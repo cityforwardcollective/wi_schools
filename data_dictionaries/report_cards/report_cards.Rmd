@@ -1,0 +1,33 @@
+---
+title: "Report Cards Table Data Dictionary"
+author: "Spencer Schien"
+date: "4/7/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+library(wisconsink12)
+library(tidyverse)
+library(knitr)
+```
+
+## Description
+
+The `report_cards` table contains data made available through DPI's [School Report Card Data Download Files](https://apps2.dpi.wi.gov/reportcards/).  A few manipulations have been performed on the data to facilitate analysis:
+
+* Variable names have been cleaned so they are shorter, they include only lower case characters, and they have no spaces
+* District and school codes have been replaced by the `dpi_true_id` variable, which standardizes the codes across the years (even if codes didn't change, the padding of codes was not consistent in DPI's reports, where a code might be 400 one year and 0400 another)
+* Many variables in DPI's report have been removed because they are superfluous (e.g. state comparison scores)
+* Two columns have been added to facilitate filters -- these are the `cg_redacted` (i.e. Closing Gaps is redacted in 2019-20) and `has_2_rc` (i.e. Choice school has two report cards for the given year)
+
+## Dictionary
+
+The table below contains the data dictionary for the `report_cards` table.  This dictionary is also provided in CSV form in this folder (raw here).
+
+```{r report_cards_dictionary}
+dict <- read_csv("report_cards_data_dictionary.csv")
+
+dict %>%
+  kable(booktabs = T)
+```
