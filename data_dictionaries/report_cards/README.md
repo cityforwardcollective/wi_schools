@@ -1,7 +1,7 @@
 Report Cards Table Data Dictionary
 ================
 Spencer Schien
-4/7/2020
+Last updated 2020-04-07
 
 ## Description
 

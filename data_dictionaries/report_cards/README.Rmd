@@ -1,7 +1,7 @@
 ---
 title: "Report Cards Table Data Dictionary"
 author: "Spencer Schien"
-date: "4/7/2020"
+date: "Last updated `r Sys.Date()`"
 output: github_document
 ---
 
