@@ -714,13 +714,15 @@ for (file in files) {
 
 choice_program <- choice_forward %>%
   select(school_year:WPCP, dpi_true_id) %>%
-  unique()
+  unique() %>%
+  filter(school_year == max(school_year)) %>%
+  select(-school_year)
 
 unique_schools <- unique_schools %>%
-  left_join(., choice_program, by = c("last_year_open" = "school_year", "dpi_true_id")) %>%
-  mutate(MPCP = ifelse(!is.na(MPCP), 1, 0),
-         RPCP = ifelse(!is.na(RPCP), 1, 0),
-         WPCP = ifelse(!is.na(WPCP), 1, 0)) 
+  left_join(., choice_program, by = c("dpi_true_id")) %>%
+  mutate(MPCP = ifelse(is.na(MPCP), 0, 1),
+         RPCP = ifelse(is.na(RPCP), 0, 1),
+         WPCP = ifelse(is.na(WPCP), 0, 1)) 
 
 choice_forward <- choice_forward %>%
   filter(test_group == "Forward")
