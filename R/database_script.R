@@ -9,7 +9,7 @@ library(readxl)
   # Uses Sept. Numbers
   
   school_year <- c("2015-16", "2016-17", "2017-18", "2018-19", "2019-20")
-  total_enrollment <- c(1266 , 1038, 842, 672, NA)
+  total_enrollment <- c(1266 , 1038, 842, 672, 536)
   
   chapter_220 <- tibble(school_year, total_enrollment, 
                         accurate_agency_type = "Chapter 220",
@@ -642,7 +642,7 @@ library(readxl)
     
     filename <- paste("imports/wsas/private", file, sep = "/")
     
-    if(length(choice_forward) == 0) {
+    if (length(choice_forward) == 0) {
       raw_choice <- read_xlsx(filename, "Opt Out Not Included", skip = 1, col_names = TRUE)
       
       raw_choice <- raw_choice %>% select(-contains("%")) %>%
@@ -734,7 +734,7 @@ library(readxl)
   test <- unique_schools %>%
     filter(dpi_true_id == "0000_1712" & MPCP == 1)
   
-  if(nrow(test) != 1) {
+  if (nrow(test) != 1) {
     
     stop("Milwaukee Choice Schools Error -- Cristo Rey not designated as MPCP. See unique_schools and choice_forward tables.")
     
@@ -745,11 +745,11 @@ library(readxl)
   # Set to NULL because using !exists() doesn't work in for loop
   public_forward <- NULL
   
-  for(file in files) {
+  for (file in files) {
     
     filename <- paste("imports/wsas/public", file, sep = "/")
     
-    if(is.null("public_forward")) {
+    if (is.null("public_forward")) {
       raw_public <- read_csv(filename, col_types = list("c",
                                                         "f",
                                                         "i",
@@ -853,9 +853,9 @@ library(readxl)
     
     filename <- paste("imports/wsas/private", file, sep = "/")
     
-    if(length(choice_act) == 0) {
+    if (length(choice_act) == 0) {
       
-      if(str_detect(filename, "2015")) {
+      if (str_detect(filename, "2015")) {
         raw_choice <- read_xlsx(filename, "ACT Score Data", col_names = TRUE)
       } else {
         raw_choice <- read_xlsx(filename, "ACT Score Data", skip = 1, col_names = TRUE)
@@ -891,7 +891,7 @@ library(readxl)
       
     } else {
       
-      if(str_detect(filename, "2015")) {
+      if (str_detect(filename, "2015")) {
         raw_choice1 <- read_xlsx(filename, "ACT Score Data", col_names = TRUE)
       } else {
         raw_choice1 <- read_xlsx(filename, "ACT Score Data", skip = 1, col_names = TRUE)
@@ -961,11 +961,11 @@ library(readxl)
   # Set to NULL because using !exists() doesn't work in for loop
   public_act <- public_act1 <-  NULL
   
-  for(file in files) {
+  for (file in files) {
     
     filename <- paste("imports/wsas/public_act", file, sep = "/")
     
-    if(is.null(public_act)) {
+    if (is.null(public_act)) {
       raw_public_act <- read_csv(filename, col_types = cols(SCHOOL_CODE = col_integer()))
       
       colnames(raw_public_act) <- str_to_lower(colnames(raw_public_act))
@@ -1023,7 +1023,7 @@ library(readxl)
   
   choice_counts <- NULL
   
-  for(file in files) {
+  for (file in files) {
     
     filename <- paste("imports/choice_counts", file, sep = "/")
     
@@ -1079,7 +1079,7 @@ library(readxl)
   
   tables <- dbListTables(school_db)
   
-  for(i in 1:length(tables)) {
+  for (i in 1:length(tables)) {
     saveRDS(dbReadTable(school_db, tables[i]), paste("imports/",
                                                      tables[i], ".rds", sep = ""))
   }
