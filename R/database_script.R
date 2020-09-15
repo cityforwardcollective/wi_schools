@@ -261,13 +261,13 @@ library(readxl)
                        "3619_0398",
                        "3619_0454")
   
-  partnership <- c("3619_1063",
-                   "3619_0432",
-                   "3619_0410",
-                   "3619_0296",
-                   "3619_1072",
-                   "3619_1074",
-                   "3619_1086")
+  partnership <- c("3619_1063", # Assata
+                   "3619_0432", # Banner Prep
+                   "3619_0410", # Grandview
+                   "3619_0296", # Lad Lake
+                   "3619_1072", # NOVA
+                   "3619_1074", # Shalom
+                   "3619_1086") # Southeastern
   
   unique_schools_ly <- all_enrollment %>%
     modify_at("school_year", factor, ordered = TRUE) %>%
