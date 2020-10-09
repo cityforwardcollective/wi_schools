@@ -68,11 +68,11 @@ library(readxl)
   # Set to NULL because using !exists() doesn't work in for loop
   public_graduation <- NULL
   
-  for(file in public_grad_files) {
+  for (file in public_grad_files) {
     
     filename <- paste("imports/graduation/public", file, sep = "/")
     
-    if(is.null("public_graduation")) {
+    if (is.null("public_graduation")) {
       
       public_graduation <- read_csv(filename) %>%
         filter(!SCHOOL_NAME %in% c("[Districtwide]", "[Statewide]")) %>%
@@ -113,6 +113,7 @@ library(readxl)
     public_graduation <- bind_rows(public_graduation, public_graduation1)
   }
   
+  ## Enrollment
   ## public file loop ====
   
   public_files <- list.files(path = "imports/enrollment/public")
