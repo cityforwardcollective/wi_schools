@@ -135,8 +135,34 @@ library(RSQLite)
   ## Add report card variables
   ## locale_description and city
   
-  schools <- schools_c %>%
+  schools_rc <- schools_c %>%
     left_join(., rc_renamed %>% select(dpi_true_id, school_year, locale_description, city))
+  
+  schools_1920 <- schools_rc %>%
+    filter(school_year == "2019-20") %>%
+    select(-c(city, locale_description))
+  
+  schools_1819 <- schools_rc %>%
+    filter(school_year == "2018-19") %>%
+    select(dpi_true_id, city, locale_description) %>%
+    unique()
+  
+  guesses <- left_join(schools_1920, schools_1819)
+  
+  schools <- schools_rc %>%
+    filter(school_year != "2019-20") %>%
+    bind_rows(., guesses) %>%
+    unique() %>%
+    left_join(., choice_counts %>% select(school_year, dpi_true_id, MPCP_count, ALL_STUDENTS_count)) %>%
+    mutate(MPCP_percent = MPCP_count / ALL_STUDENTS_count,
+           MPCP_percent = replace_na(MPCP_percent, 0)) %>%
+    mutate(milwaukee_indicator = ifelse(district_name == "Milwaukee", 1,  # Public schools or Private within district limits
+                                        ifelse(is.na(city), 0,
+                                               ifelse(city == "Milwaukee" & locale_description == "City", 1, # Gets rid of suburbs
+                                                      ifelse(MPCP_percent > 0.49, 1, 0))))) %>% # For MPCP outside of district
+    select(-c(ALL_STUDENTS_count, MPCP_count))
+  
+  nrow(schools_rc) == nrow(schools)
   
   # Build Database
   
