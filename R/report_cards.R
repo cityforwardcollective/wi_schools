@@ -297,14 +297,10 @@ make_report_cards <- function() {
     mutate(has_2_rc = ifelse(number == 2, 1, 0)) %>%
     select(-number)
   
-  rc_renamed <- left_join(rc_renamed, mult_rc, by = c("dpi_true_id", "school_year")) %>%
-    select(-c(school_name,
-              district_name,
-              locale_description,
-              city))
+  rc_renamed <- left_join(rc_renamed, mult_rc, by = c("dpi_true_id", "school_year"))
   
   return(rc_renamed)
 }
 
-report_cards <- make_report_cards()
+rc_renamed <- make_report_cards()
 
