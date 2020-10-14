@@ -174,7 +174,7 @@ library(RSQLite)
   
   dbWriteTable(school_db, "enrollment", only_enrollment, overwrite = TRUE)
   
-  dbWriteTable(school_db, "report_cards", rc_renamed, overwrite = TRUE)
+  dbWriteTable(school_db, "report_cards", report_cards, overwrite = TRUE)
   
   dbWriteTable(school_db, "forward_exam", forward_exam, overwrite = TRUE)
   
