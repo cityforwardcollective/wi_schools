@@ -299,6 +299,17 @@ make_report_cards <- function() {
   
   rc_renamed <- left_join(rc_renamed, mult_rc, by = c("dpi_true_id", "school_year"))
   
+  # Fix Excel grade band to date madness
+  
+  rc_renamed <- rc_renamed %>%
+    mutate(grade_band = case_when(grade_band == "42898" ~ "6-12",
+                                  grade_band == "42990" ~ "9-12",
+                                  grade_band == "42894" ~ "6-8",
+                                  grade_band == "43628" ~ "6-12",
+                                  grade_band == "43624" ~ "6-8",
+                                  grade_band == "43720" ~ "9-12",
+                                  TRUE ~ grade_band))
+  
   return(rc_renamed)
 }
 
