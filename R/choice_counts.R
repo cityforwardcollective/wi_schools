@@ -31,7 +31,20 @@ make_choice_counts <- function() {
     choice_counts <- bind_rows(choice_counts, cc)
   }
   
-  mpcp_errors <- choice_counts %>%
+  prev_max <- choice_names %>%
+    group_by(dpi_true_id) %>%
+    filter(school_year == max(school_year)) %>%
+    select(school_name, dpi_true_id)
+  
+  not_in_yet <- choice_counts %>%
+    anti_join(., choice_names) %>%
+    select(-dpi_true_id) %>%
+    left_join(., prev_max) %>%
+    bind_rows(., choice_names) %>%
+    arrange(school_name, school_year) %>%
+    write_csv(., "imports/temp.csv")
+  
+  mpcp_errors <- not_in_yet %>%
     filter(is.na(dpi_true_id) & !is.na(MPCP_count))
   
   if (nrow(mpcp_errors) > 0) {
@@ -51,5 +64,4 @@ make_choice_counts <- function() {
 # Export objects 
 
 choice_counts <- make_choice_counts()
-
 

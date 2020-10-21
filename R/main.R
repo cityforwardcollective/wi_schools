@@ -73,7 +73,7 @@ library(RSQLite)
     summarise(total_enrollment = sum(school_enrollment, na.rm = TRUE)) %>%
     mutate(total_enrollment = district_enrollment - total_enrollment,
            accurate_agency_type = "Mobile Students",
-           broad_agency_type = "District-Operated") %>%
+           broad_agency_type = "District Operated") %>%
     select(-district_enrollment)
   
   
