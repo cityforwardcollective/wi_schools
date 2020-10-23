@@ -159,7 +159,7 @@ library(RSQLite)
     mutate(milwaukee_indicator = ifelse(district_name == "Milwaukee", 1,  # Public schools or Private within district limits
                                         ifelse(is.na(city), 0,
                                                ifelse(city == "Milwaukee" & locale_description == "City", 1, # Gets rid of suburbs
-                                                      ifelse(MPCP_percent > 0.49, 1, 0))))) %>% # For MPCP outside of district
+                                                      ifelse(MPCP_percent > 0.749, 1, 0))))) %>% # For MPCP outside of district
     select(-c(ALL_STUDENTS_count, MPCP_count))
   
   nrow(schools_rc) == nrow(schools)
