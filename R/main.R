@@ -202,6 +202,8 @@ library(RSQLite)
   
   enrollment <- readRDS("imports/enrollment.rds")
   
+  attendance <- readRDS("imports/attendance.rds")
+  
   report_cards <- readRDS("imports/report_cards.rds")
   attr(report_cards, "source") <- "School Report Card Data Download File: https://apps2.dpi.wi.gov/reportcards/"
   attr(report_cards, "data_dictionary") <- read_csv("data_dictionaries/report_cards/report_cards_data_dictionary.csv")
@@ -216,7 +218,7 @@ library(RSQLite)
   
   act <- readRDS("imports/act.rds")
   
-  save(list = c("schools", "enrollment", "report_cards", "forward_exam", "graduation", "choice_counts", "other_enrollment", "act"),
+  save(list = c("schools", "enrollment", "attendance", "report_cards", "forward_exam", "graduation", "choice_counts", "other_enrollment", "act"),
        file = "C:/Users/Spencer/repor/wisconsink12/data/school_data.RData")
   
   dbDisconnect(school_db)
