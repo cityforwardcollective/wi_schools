@@ -18,6 +18,10 @@ library(RSQLite)
     mutate(student_count = as.numeric(student_count)) %>%
     select(school_year, dpi_true_id, group_by, group_by_value, student_count)
   
+  # Attendance
+  
+  source("R/attendance.R")
+  
   # Report Cards
   
   source("R/report_cards.R")
@@ -173,6 +177,8 @@ library(RSQLite)
   dbWriteTable(school_db, "graduation", public_graduation, overwrite = TRUE)
   
   dbWriteTable(school_db, "enrollment", only_enrollment, overwrite = TRUE)
+  
+  dbWriteTable(school_db, "attendance", attendance, overwrite = TRUE)
   
   dbWriteTable(school_db, "report_cards", report_cards, overwrite = TRUE)
   
