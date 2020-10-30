@@ -22,6 +22,10 @@ library(RSQLite)
   
   source("R/attendance.R")
   
+  # Discipline
+  
+  source("R/discipline.R")
+  
   # Report Cards
   
   source("R/report_cards.R")
@@ -160,7 +164,7 @@ library(RSQLite)
     left_join(., choice_counts %>% select(school_year, dpi_true_id, MPCP_count, ALL_STUDENTS_count)) %>%
     mutate(MPCP_percent = MPCP_count / ALL_STUDENTS_count,
            MPCP_percent = replace_na(MPCP_percent, 0)) %>%
-    mutate(milwaukee_indicator = ifelse(district_name == "Milwaukee", 1,  # Public schools or Private within district limits
+    mutate(milwaukee_indicator = ifelse(district_name == "Milwaukee" & !(agency_type == "Private school" & MPCP_has_students == 0), 1,  # Public schools or Private within district limits
                                         ifelse(is.na(city), 0,
                                                ifelse(city == "Milwaukee" & locale_description == "City", 1, # Gets rid of suburbs
                                                       ifelse(MPCP_percent > 0.749, 1, 0))))) %>% # For MPCP outside of district
@@ -179,6 +183,8 @@ library(RSQLite)
   dbWriteTable(school_db, "enrollment", only_enrollment, overwrite = TRUE)
   
   dbWriteTable(school_db, "attendance", attendance, overwrite = TRUE)
+  
+  dbWriteTable(school_db, "discipline", discipline, overwrite = TRUE)
   
   dbWriteTable(school_db, "report_cards", report_cards, overwrite = TRUE)
   
@@ -204,6 +210,8 @@ library(RSQLite)
   
   attendance <- readRDS("imports/attendance.rds")
   
+  discipline <- readRDS("imports/discipline.rds")
+  
   report_cards <- readRDS("imports/report_cards.rds")
   attr(report_cards, "source") <- "School Report Card Data Download File: https://apps2.dpi.wi.gov/reportcards/"
   attr(report_cards, "data_dictionary") <- read_csv("data_dictionaries/report_cards/report_cards_data_dictionary.csv")
@@ -218,7 +226,8 @@ library(RSQLite)
   
   act <- readRDS("imports/act.rds")
   
-  save(list = c("schools", "enrollment", "attendance", "report_cards", "forward_exam", "graduation", "choice_counts", "other_enrollment", "act"),
+  save(list = c("schools", "enrollment", "attendance", "discipline",
+                "report_cards", "forward_exam", "graduation", "choice_counts", "other_enrollment", "act"),
        file = "C:/Users/Spencer/repor/wisconsink12/data/school_data.RData")
   
   dbDisconnect(school_db)
