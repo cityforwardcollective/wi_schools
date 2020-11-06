@@ -89,20 +89,15 @@ library(RSQLite)
   
   # Schools
   
-  instrumentality <- c("3619_0162",
-                       "3619_0413",
-                       "3619_0334",
-                       "3619_0165",
-                       "3619_0398",
-                       "3619_0454")
+  ## Instrumentality and Partnership
+  ## NOTE: MATC Emerging Scholars is listed as a Parternship School,
+  ## but the students are tracked in "home school" SIS, so it doesn't
+  ## have a school code/appear in reports.
   
-  partnership <- c("3619_1063", # Assata
-                   "3619_0432", # Banner Prep
-                   "3619_0410", # Grandview
-                   "3619_0296", # Lad Lake
-                   "3619_1072", # NOVA
-                   "3619_1074", # Shalom
-                   "3619_1086") # Southeastern
+  other_schools <- read_csv("imports/inst_partner_schools.csv") %>%
+    filter(!is.na(dpi_true_id)) %>%
+    select(-school_name)
+  
   
   ## All fields sourced from Enrollment reports
   
@@ -114,21 +109,32 @@ library(RSQLite)
     mutate(charter_indicator = ifelse(enrollment_charter_indicator == "Yes", 1, 0),
            choice_indicator = ifelse(enrollment_choice_identifier == "CHC", 1, 0)) %>%
     select(-c(enrollment_charter_indicator, enrollment_choice_identifier)) %>%
-    unique() %>%
+    unique()
+  
+  with_others <- schools_e %>%
+    semi_join(., other_schools %>% select(-accurate_agency_type)) %>%
+    left_join(., other_schools)
+  
+  not_others <- schools_e %>%
+    
+    # anti_join removes inst and partnership schools
+    
+    anti_join(., other_schools %>% select(-accurate_agency_type)) %>%
     mutate(choice_indicator = ifelse(is.na(choice_indicator), 0, choice_indicator),
            accurate_agency_type = ifelse(agency_type == "Non District Charter Schools", "2r/2x Charter",
                                          ifelse(agency_type == "Private school", "Private",
-                                                ifelse(dpi_true_id %in% instrumentality, "Instrumentality Charter",
-                                                       ifelse(dpi_true_id %in% partnership, "Partnership",
-                                                              ifelse(agency_type == "Public school" & charter_indicator == 1, "Non-Instrumentality Charter",
-                                                                     "Traditional Public"))))),
-           broad_agency_type = ifelse(accurate_agency_type %in% c("2r/2x Charter", "Non-Instrumentality Charter", "Partnership"), "Independently Operated",
-                                      ifelse(accurate_agency_type == "Private", "Private",
-                                             "District Operated")))
+                                                ifelse(agency_type == "Public school" & charter_indicator == 1, "Non-Instrumentality Charter",
+                                                       "Traditional Public"))))
+  schools_bat <- bind_rows(with_others, not_others) %>%
+    mutate(broad_agency_type = ifelse(accurate_agency_type %in% c("2r/2x Charter", "Non-Instrumentality Charter", "Partnership"), "Independently Operated",
+                                    ifelse(accurate_agency_type == "Private", "Private",
+                                           "District Operated")))
+  
+  
   
   ## Add individual choice program indicators
   
-  schools_c <- schools_e %>%
+  schools_c <- schools_bat %>%
     left_join(., choice_counts %>% select(-school_name)) %>%
     mutate(MPCP_indicator = ifelse(!is.na(MPCP_count), 1, 0),
            RPCP_indicator = ifelse(!is.na(RPCP_count), 1, 0),
