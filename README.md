@@ -11,7 +11,9 @@ The resulting data tables are exported to the [wisconsink12](https://github.com/
 * Enrollment
     - [Public Schools](https://dpi.wi.gov/wisedash/download-files/type?field_wisedash_upload_type_value=Enrollment)
     - [Private Schools](https://dpi.wi.gov/wisedash/download-files/type?field_wisedash_upload_type_value=Enrollment-Private-School)
-* [Choice Counts](https://dpi.wi.gov/sms/choice-programs/data)
+* Choice Counts
+    - [All Programs 2016-17 SY to Present](https://dpi.wi.gov/sms/choice-programs/data)
+    - [Earlier MPCP Counts](https://dpi.wi.gov/parental-education-options/choice-programs/data/mpcp-historical)
 * [Report Cards](https://apps2.dpi.wi.gov/reportcards/)
 * High School Completion
     - [Public School](https://dpi.wi.gov/wisedash/download-files/type?field_wisedash_upload_type_value=hs-completion)
@@ -22,3 +24,6 @@ The resulting data tables are exported to the [wisconsink12](https://github.com/
     - [Private Schools Forward Exam and ACT](https://dpi.wi.gov/assessment/parental-choice-program/data)
 * [Open Enrollment](https://dpi.wi.gov/open-enrollment/data/aid-adjustments)
 * [Chapter 220](https://dpi.wi.gov/sfs/aid/general/integration-220/overview)
+* [Attendance](https://dpi.wi.gov/wisedash/download-files/type?field_wisedash_upload_type_value=Attendance)
+* [Suspension](https://dpi.wi.gov/wisedash/download-files/type?field_wisedash_upload_type_value=Discipline)
+
