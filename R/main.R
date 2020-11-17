@@ -26,6 +26,10 @@ library(RSQLite)
   
   source("R/discipline.R")
   
+  # Retention (Grade Promotion)
+  
+  source("R/retention.R")
+  
   # Report Cards
   
   source("R/report_cards.R")
@@ -192,6 +196,8 @@ library(RSQLite)
   
   dbWriteTable(school_db, "discipline", discipline, overwrite = TRUE)
   
+  dbWriteTable(school_db, "retention", retention, overwrite = TRUE)
+  
   dbWriteTable(school_db, "report_cards", report_cards, overwrite = TRUE)
   
   dbWriteTable(school_db, "forward_exam", forward_exam, overwrite = TRUE)
@@ -218,6 +224,8 @@ library(RSQLite)
   
   discipline <- readRDS("imports/discipline.rds")
   
+  retention <- readRDS("imports/retention.rds")
+  
   report_cards <- readRDS("imports/report_cards.rds")
   attr(report_cards, "source") <- "School Report Card Data Download File: https://apps2.dpi.wi.gov/reportcards/"
   attr(report_cards, "data_dictionary") <- read_csv("data_dictionaries/report_cards/report_cards_data_dictionary.csv")
@@ -232,7 +240,7 @@ library(RSQLite)
   
   act <- readRDS("imports/act.rds")
   
-  save(list = c("schools", "enrollment", "attendance", "discipline",
+  save(list = c("schools", "enrollment", "attendance", "discipline", "retention",
                 "report_cards", "forward_exam", "graduation", "choice_counts", "other_enrollment", "act"),
        file = "C:/Users/Spencer/repor/wisconsink12/data/school_data.RData")
   
