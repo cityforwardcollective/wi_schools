@@ -18,6 +18,18 @@ library(RSQLite)
     mutate(student_count = as.numeric(student_count)) %>%
     select(school_year, dpi_true_id, group_by, group_by_value, student_count)
   
+  grade_levels <- all_enrollment %>%
+    filter(group_by == "Grade Level") %>%
+    modify_at("group_by_value", factor, levels = c("PK",
+                                                   "K3",
+                                                   "K4",
+                                                   "KG",
+                                                   as.character(seq(from = 1, to = 12, by = 1))), ordered = TRUE) %>%
+    filter(student_count > 0 & !is.na(group_by_value)) %>%
+    group_by(school_year, dpi_true_id, school_name) %>%
+    summarise(lowest_enrolled_grade = min(group_by_value),
+              highest_enrolled_grade = max(group_by_value))
+  
   # Attendance
   
   source("R/attendance.R")
@@ -179,6 +191,8 @@ library(RSQLite)
                                                ifelse(city == "Milwaukee" & locale_description == "City", 1, # Gets rid of suburbs
                                                       ifelse(MPCP_percent > 0.749, 1, 0))))) %>% # For MPCP outside of district
     select(-c(ALL_STUDENTS_count, MPCP_count))
+  
+  schools <- left_join(schools, grade_levels)
   
   nrow(schools_rc) == nrow(schools)
   
