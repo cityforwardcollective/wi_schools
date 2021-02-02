@@ -186,7 +186,8 @@ library(RSQLite)
     left_join(., choice_counts %>% select(school_year, dpi_true_id, MPCP_count, ALL_STUDENTS_count)) %>%
     mutate(MPCP_percent = MPCP_count / ALL_STUDENTS_count,
            MPCP_percent = replace_na(MPCP_percent, 0)) %>%
-    mutate(milwaukee_indicator = ifelse(district_name == "Milwaukee" & !(agency_type == "Private school" & MPCP_has_students == 0), 1,  # Public schools or Private within district limits
+    # Exclude Milwaukee Private schools that don't have publicly funded students
+    mutate(milwaukee_indicator = ifelse(district_name == "Milwaukee" & !(agency_type == "Private school" & MPCP_has_students == 0 & SNSP_has_students == 0), 1,
                                         ifelse(is.na(city), 0,
                                                ifelse(city == "Milwaukee" & locale_description == "City", 1, # Gets rid of suburbs
                                                       ifelse(MPCP_percent > 0.749, 1, 0))))) %>% # For MPCP outside of district
