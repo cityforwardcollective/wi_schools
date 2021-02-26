@@ -93,14 +93,40 @@ make_enrollment <- function() {
                  school_name, district_name, county, charter_indicator, choice_identifier) %>%
         summarise(student_count = sum(student_count, na.rm = TRUE)) %>%
         filter(group_by_value != "<NA>" & !is.na(school_name))
+        
+        pe_gender <- read_xlsx(filename, sheet = 3, skip = 2) %>%
+          mutate(school_year = paste(as.numeric(Year) - 1, "-", as.numeric(Year) - 2000, sep = ""),
+                 school_code = str_pad(`Sch Code`, 4, side = "left", pad = "0"),
+                 district_code = "0000",
+                 charter_indicator = "No",
+                 agency_type = "Private school",
+                 dpi_true_id = paste(district_code, school_code, sep = "_"),
+                 Grade = str_remove(Grade, "^0")) %>%
+          select(school_year,
+                 district_name = `District Name`,
+                 school_name = School,
+                 county = County,
+                 dpi_true_id,
+                 Female,
+                 Male, Total, charter_indicator, agency_type, choice_identifier = `Choice Identifier`) %>%
+          pivot_longer(cols = c("Female", "Male"), names_to = "group_by_value", values_to = "student_count") %>%
+          group_by(school_year, dpi_true_id, group_by_value, agency_type,
+                   school_name, district_name, county, charter_indicator, choice_identifier) %>%
+          summarise(student_count = sum(student_count, na.rm = TRUE)) %>%
+          filter(group_by_value != "<NA>" & !is.na(school_name))
+        
       
       sum_all <- private_enrollment %>%
         group_by(school_year, dpi_true_id, school_name, district_name, county, charter_indicator, agency_type, choice_identifier) %>%
         summarise(student_count = sum(student_count)) %>%
         mutate(group_by_value = "All Students")
       
+      private_enrollment <- bind_rows(private_enrollment, pe_gender)
+      
       private_enrollment <- bind_rows(private_enrollment, sum_all) %>%
-        mutate(group_by = ifelse(group_by_value == "All Students", "All Students", "Grade Level"))
+        mutate(group_by = case_when(group_by_value == "All Students" ~ "All Students", 
+                                    group_by_value %in% c("Male", "Female") ~ "Gender",
+                                    TRUE ~ "Grade Level"))
       
       
     } else {
@@ -126,13 +152,41 @@ make_enrollment <- function() {
         summarise(student_count = sum(student_count, na.rm = TRUE)) %>%
         filter(group_by_value != "<NA>" & !is.na(school_name))
       
+      pe_gender <- read_xlsx(filename, sheet = 3, skip = 2) %>%
+        mutate(school_year = paste(as.numeric(Year) - 1, "-", as.numeric(Year) - 2000, sep = ""),
+               school_code = str_pad(`Sch Code`, 4, side = "left", pad = "0"),
+               district_code = "0000",
+               charter_indicator = "No",
+               agency_type = "Private school",
+               dpi_true_id = paste(district_code, school_code, sep = "_"),
+               Grade = str_remove(Grade, "^0")) %>%
+        select(school_year,
+               district_name = `District Name`,
+               school_name = School,
+               county = County,
+               dpi_true_id,
+               Female,
+               Male, Total, charter_indicator, agency_type, choice_identifier = `Choice Identifier`) %>%
+        pivot_longer(cols = c("Female", "Male"), names_to = "group_by_value", values_to = "student_count") %>%
+        group_by(school_year, dpi_true_id, group_by_value, agency_type,
+                 school_name, district_name, county, charter_indicator, choice_identifier) %>%
+        summarise(student_count = sum(student_count, na.rm = TRUE)) %>%
+        filter(group_by_value != "<NA>" & !is.na(school_name))
+      
+      
+      
       sum_all <- private_enrollment1 %>%
         group_by(school_year, dpi_true_id, school_name, district_name, county, charter_indicator, agency_type, choice_identifier) %>%
         summarise(student_count = sum(student_count)) %>%
         mutate(group_by_value = "All Students")
       
+      private_enrollment1 <- bind_rows(private_enrollment1, pe_gender)
+      
+      
       private_enrollment1 <- bind_rows(private_enrollment1, sum_all) %>%
-        mutate(group_by = ifelse(group_by_value == "All Students", "All Students", "Grade Level"))
+        mutate(group_by = case_when(group_by_value == "All Students" ~ "All Students", 
+                                    group_by_value %in% c("Male", "Female") ~ "Gender",
+                                    TRUE ~ "Grade Level"))
     }
     
     private_enrollment <- bind_rows(private_enrollment, private_enrollment1)
