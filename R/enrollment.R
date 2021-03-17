@@ -24,7 +24,10 @@ make_enrollment <- function() {
         mutate(SCHOOL_CODE = str_pad(SCHOOL_CODE, 4, side = "left", pad = "0"),
                dpi_true_id = paste(DISTRICT_CODE, SCHOOL_CODE, sep = "_"),
                STUDENT_COUNT = as.numeric(STUDENT_COUNT),
-               choice_identifier = "") %>%
+               choice_identifier = "",
+               # 2020-21 changed EL coding
+               GROUP_BY = ifelse(GROUP_BY == "EL Status", "ELL Status", GROUP_BY),
+               GROUP_BY_VALUE = ifelse(GROUP_BY_VALUE == "EL", "ELL/LEP", GROUP_BY_VALUE)) %>%
         select(school_year = SCHOOL_YEAR, 
                dpi_true_id,
                school_name = SCHOOL_NAME, 
@@ -43,7 +46,10 @@ make_enrollment <- function() {
         mutate(SCHOOL_CODE = str_pad(SCHOOL_CODE, 4, side = "left", pad = "0"),
                dpi_true_id = paste(DISTRICT_CODE, SCHOOL_CODE, sep = "_"),
                STUDENT_COUNT = as.numeric(STUDENT_COUNT),
-               choice_identifier = "") %>%
+               choice_identifier = "",
+               # 2020-21 changed EL coding
+               GROUP_BY = ifelse(GROUP_BY == "EL Status", "ELL Status", GROUP_BY),
+               GROUP_BY_VALUE = ifelse(GROUP_BY_VALUE == "EL", "ELL/LEP", GROUP_BY_VALUE)) %>%
         select(school_year = SCHOOL_YEAR, 
                dpi_true_id, 
                school_name = SCHOOL_NAME, 

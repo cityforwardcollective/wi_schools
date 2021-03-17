@@ -70,13 +70,15 @@ library(RSQLite)
                    "2016-17", 
                    "2017-18", 
                    "2018-19", 
-                   "2019-20")
+                   "2019-20",
+                   "2020-21")
   
   total_enrollment <- c(1266, 
                         1038, 
                         842, 
                         672, 
-                        536)
+                        536,
+                        427) # Numbers preliminary as of 3/10/2021
   
   chapter_220 <- tibble(school_year, total_enrollment, 
                         accurate_agency_type = "Chapter 220",
@@ -106,7 +108,7 @@ library(RSQLite)
   # Schools
   
   ## Instrumentality and Partnership
-  ## NOTE: MATC Emerging Scholars is listed as a Parternship School,
+  ## NOTE: MATC Emerging Scholars is listed as a Partnernship School,
   ## but the students are tracked in "home school" SIS, so it doesn't
   ## have a school code/appear in reports.
   
@@ -168,19 +170,23 @@ library(RSQLite)
   schools_rc <- schools_c %>%
     left_join(., rc_renamed %>% select(dpi_true_id, school_year, locale_description, city))
   
-  schools_1920 <- schools_rc %>%
-    filter(school_year == "2019-20") %>%
+  rc_years <- report_cards %>%
+    .[["school_year"]] %>%
+    unique()
+  
+  schools_no_rc <- schools_rc %>%
+    filter(!school_year %in% rc_years) %>%
     select(-c(city, locale_description))
   
-  schools_1819 <- schools_rc %>%
-    filter(school_year == "2018-19") %>%
+  schools_max_rc <- schools_rc %>%
+    filter(school_year == max(rc_years)) %>%
     select(dpi_true_id, city, locale_description) %>%
     unique()
   
-  guesses <- left_join(schools_1920, schools_1819)
+  guesses <- left_join(schools_no_rc, schools_max_rc)
   
   schools <- schools_rc %>%
-    filter(school_year != "2019-20") %>%
+    filter(school_year %in% rc_years) %>%
     bind_rows(., guesses) %>%
     unique() %>%
     left_join(., choice_counts %>% select(school_year, dpi_true_id, MPCP_count, ALL_STUDENTS_count)) %>%
