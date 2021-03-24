@@ -120,7 +120,7 @@ library(RSQLite)
   ## All fields sourced from Enrollment reports
   
   schools_e <- all_enrollment %>%
-    select(school_year:district_name,
+    select(school_year:cesa,
            enrollment_charter_indicator,
            enrollment_choice_identifier,
            county) %>%

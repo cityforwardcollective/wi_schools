@@ -33,6 +33,7 @@ make_enrollment <- function() {
                school_name = SCHOOL_NAME, 
                agency_type = AGENCY_TYPE,
                district_name = DISTRICT_NAME, 
+               cesa = CESA,
                group_by = GROUP_BY, 
                charter_indicator = CHARTER_IND,
                county = COUNTY, 
@@ -55,6 +56,7 @@ make_enrollment <- function() {
                school_name = SCHOOL_NAME, 
                agency_type = AGENCY_TYPE,
                district_name = DISTRICT_NAME, 
+               cesa = CESA,
                group_by = GROUP_BY, 
                charter_indicator = CHARTER_IND,
                county = COUNTY, 
@@ -92,10 +94,11 @@ make_enrollment <- function() {
                school_name = School,
                county = County,
                dpi_true_id,
+               cesa = CESA,
                Grade, Total, charter_indicator, agency_type, choice_identifier = `Choice Identifier`) %>%
         spread(Grade, Total, fill = 0) %>%
-        gather("group_by_value", "student_count", 9:26) %>%
-        group_by(school_year, dpi_true_id, group_by_value, agency_type,
+        gather("group_by_value", "student_count", 10:27) %>%
+        group_by(school_year, dpi_true_id, group_by_value, agency_type, cesa,
                  school_name, district_name, county, charter_indicator, choice_identifier) %>%
         summarise(student_count = sum(student_count, na.rm = TRUE)) %>%
         filter(group_by_value != "<NA>" & !is.na(school_name))
@@ -112,6 +115,7 @@ make_enrollment <- function() {
                  district_name = `District Name`,
                  school_name = School,
                  county = County,
+                 cesa = CESA,
                  dpi_true_id,
                  Female,
                  Male, Total, charter_indicator, agency_type, choice_identifier = `Choice Identifier`) %>%
@@ -123,7 +127,8 @@ make_enrollment <- function() {
         
       
       sum_all <- private_enrollment %>%
-        group_by(school_year, dpi_true_id, school_name, district_name, county, charter_indicator, agency_type, choice_identifier) %>%
+        group_by(school_year, dpi_true_id, school_name, district_name, cesa,
+                 county, charter_indicator, agency_type, choice_identifier) %>%
         summarise(student_count = sum(student_count)) %>%
         mutate(group_by_value = "All Students")
       
@@ -149,11 +154,12 @@ make_enrollment <- function() {
                district_name = `District Name`,
                school_name = School,
                county = County,
+               cesa = CESA,
                dpi_true_id,
                Grade, Total, charter_indicator, agency_type, choice_identifier = `Choice Identifier`) %>%
         spread(Grade, Total, fill = 0) %>%
-        gather("group_by_value", "student_count", 9:26) %>%
-        group_by(school_year, dpi_true_id, group_by_value, agency_type,
+        gather("group_by_value", "student_count", 10:27) %>%
+        group_by(school_year, dpi_true_id, group_by_value, agency_type, cesa,
                  school_name, district_name, county, charter_indicator, choice_identifier) %>%
         summarise(student_count = sum(student_count, na.rm = TRUE)) %>%
         filter(group_by_value != "<NA>" & !is.na(school_name))
@@ -170,6 +176,7 @@ make_enrollment <- function() {
                district_name = `District Name`,
                school_name = School,
                county = County,
+               cesa = CESA,
                dpi_true_id,
                Female,
                Male, Total, charter_indicator, agency_type, choice_identifier = `Choice Identifier`) %>%
@@ -182,7 +189,8 @@ make_enrollment <- function() {
       
       
       sum_all <- private_enrollment1 %>%
-        group_by(school_year, dpi_true_id, school_name, district_name, county, charter_indicator, agency_type, choice_identifier) %>%
+        group_by(school_year, dpi_true_id, school_name, district_name, cesa,
+                 county, charter_indicator, agency_type, choice_identifier) %>%
         summarise(student_count = sum(student_count)) %>%
         mutate(group_by_value = "All Students")
       
