@@ -168,7 +168,8 @@ library(RSQLite)
   ## locale_description and city
   
   schools_rc <- schools_c %>%
-    left_join(., rc_renamed %>% select(dpi_true_id, school_year, locale_description, city))
+    left_join(., rc_renamed %>% 
+                select(dpi_true_id, school_year, locale_description, city))
   
   rc_years <- report_cards %>%
     .[["school_year"]] %>%
