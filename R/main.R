@@ -78,7 +78,7 @@ library(RSQLite)
                         842, 
                         672, 
                         536,
-                        427) # Numbers preliminary as of 3/10/2021
+                        427) # Numbers preliminary as of 7/7/2021
   
   chapter_220 <- tibble(school_year, total_enrollment, 
                         accurate_agency_type = "Chapter 220",
