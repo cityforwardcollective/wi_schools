@@ -54,6 +54,7 @@ make_enrollment <- function() {
         temp <- temp %>%
           filter(!SCHOOL_NAME %in% c("[Districtwide]", "[Statewide]")) %>%
           mutate(SCHOOL_CODE = str_pad(SCHOOL_CODE, 4, side = "left", pad = "0"),
+                 DISTRICT_CODE = "0000",
                  dpi_true_id = paste(DISTRICT_CODE, SCHOOL_CODE, sep = "_"),
                  STUDENT_COUNT = as.numeric(STUDENT_COUNT),
                  charter_identifier = "",
