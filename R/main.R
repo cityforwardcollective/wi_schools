@@ -125,7 +125,7 @@ library(RSQLite)
            enrollment_choice_identifier,
            county) %>%
     mutate(charter_indicator = ifelse(enrollment_charter_indicator == "Yes", 1, 0),
-           choice_indicator = ifelse(enrollment_choice_identifier == "CHC", 1, 0)) %>%
+           choice_indicator = ifelse(enrollment_choice_identifier %in% c("CHC", "Yes"), 1, 0)) %>%
     select(-c(enrollment_charter_indicator, enrollment_choice_identifier)) %>%
     unique()
   

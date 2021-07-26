@@ -57,7 +57,7 @@ make_enrollment <- function() {
                  DISTRICT_CODE = "0000",
                  dpi_true_id = paste(DISTRICT_CODE, SCHOOL_CODE, sep = "_"),
                  STUDENT_COUNT = as.numeric(STUDENT_COUNT),
-                 charter_identifier = "",
+                 charter_indicator = "",
                  # 2020-21 changed EL coding
                  GROUP_BY = ifelse(GROUP_BY == "EL Status", "ELL Status", GROUP_BY),
                  GROUP_BY_VALUE = ifelse(GROUP_BY_VALUE == "EL", "ELL/LEP", GROUP_BY_VALUE),
@@ -69,11 +69,11 @@ make_enrollment <- function() {
                  district_name = DISTRICT_NAME, 
                  cesa,
                  group_by = GROUP_BY, 
-                 charter_indicator = CHOICE_IND,
+                 choice_identifier = CHOICE_IND,
                  county = COUNTY, 
                  group_by_value = GROUP_BY_VALUE, 
                  student_count = STUDENT_COUNT, 
-                 charter_identifier)
+                 charter_indicator)
         
       }
       
