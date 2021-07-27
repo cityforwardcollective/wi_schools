@@ -50,8 +50,47 @@ make_enrollment <- function() {
       } else {
         
         # Handle Private CSV
+      
+        gender <- temp %>%
+          group_by(SCHOOL_YEAR,
+                   AGENCY_TYPE,
+                   CESA,
+                   COUNTY_CODE,
+                   COUNTY,
+                   CITY,
+                   DISTRICT_CODE,
+                   SCHOOL_CODE,
+                   GRADE_GROUP,
+                   CHOICE_IND,
+                   DISTRICT_NAME,
+                   SCHOOL_NAME,
+                   GROUP_BY,
+                   GROUP_BY_VALUE) %>%
+          summarise(STUDENT_COUNT = sum(STUDENT_COUNT))
         
-        temp <- temp %>%
+        grade_level <- temp %>%
+          mutate(GROUP_BY = "Grade Level",
+                 GROUP_BY_VALUE = GRADE_LEVEL) %>%
+          group_by(SCHOOL_YEAR,
+                   AGENCY_TYPE,
+                   CESA,
+                   COUNTY_CODE,
+                   COUNTY,
+                   CITY,
+                   DISTRICT_CODE,
+                   SCHOOL_CODE,
+                   GRADE_GROUP,
+                   CHOICE_IND,
+                   DISTRICT_NAME,
+                   SCHOOL_NAME,
+                   GROUP_BY,
+                   GROUP_BY_VALUE) %>%
+            summarise(STUDENT_COUNT = sum(STUDENT_COUNT))
+        
+        t <- bind_rows(gender, grade_level)
+          
+        
+        temp <- t %>%
           filter(!SCHOOL_NAME %in% c("[Districtwide]", "[Statewide]")) %>%
           mutate(SCHOOL_CODE = str_pad(SCHOOL_CODE, 4, side = "left", pad = "0"),
                  DISTRICT_CODE = "0000",
