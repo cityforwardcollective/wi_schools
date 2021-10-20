@@ -3,7 +3,7 @@
 # Public Forward/DLM -- https://dpi.wi.gov/wisedash/download-files/type?field_wisedash_upload_type_value=Forward
 # Private -- https://dpi.wi.gov/assessment/parental-choice-program/data
 #
-# NOTE: Opt Outs NOT included in denominator for Private Schools
+# NOTE: Opt Outs included in denominator for Private Schools to match Public methodology
 
 library(tidyverse)
 library(readxl)
@@ -76,7 +76,7 @@ make_forward_exam <- function() {
                group_by = "All Students",
                group_by_value = "All Students") %>%
         modify_at("student_count", as.integer) %>%
-        filter(grade != "Total" & !str_detect(school_name, "Choice Program")) %>%
+        filter(grade != "Total" & !str_detect(school_name, "All Choice|Choice Program")) %>%
         select(-c(enrollment))
     } else {
       
@@ -111,7 +111,7 @@ make_forward_exam <- function() {
                group_by_value = "All Students") %>%
         modify_at("student_count", as.integer) %>%
         modify_at("group_count", as.integer) %>%
-        filter(grade != "Total" & !str_detect(school_name, "Choice Program")) %>%
+        filter(grade != "Total" & !str_detect(school_name, "All Choice|Choice Program")) %>%
         select(-c(enrollment))
     }
     
