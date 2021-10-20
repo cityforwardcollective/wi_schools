@@ -26,7 +26,7 @@ make_forward_exam <- function() {
                      "grade",
                      "enrollment",
                      "parent_opt_out",
-                     "not_tested",
+                     "No Test",
                      "Below Basic",
                      "Basic",
                      "Proficient",
@@ -35,9 +35,9 @@ make_forward_exam <- function() {
                      "school_name")
     
     x <- x %>%
-      mutate_at(9:12, as.integer) %>%
-      mutate(group_count = `Below Basic` + Basic + Proficient + Advanced) %>%
-      gather(key = "test_result", value = "student_count", `Below Basic`:Advanced)
+      mutate_at(8:12, as.integer) %>%
+      mutate(group_count = `No Test` + `Below Basic` + Basic + Proficient + Advanced) %>%
+      gather(key = "test_result", value = "student_count", `No Test`:Advanced)
   }
   
   for (file in files) {
