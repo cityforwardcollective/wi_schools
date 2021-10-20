@@ -68,8 +68,9 @@ make_choice_counts <- function() {
   
   if (nrow(mpcp_errors) > 0) {
     
+    warning("At least one MPCP school not properly joined.")
+    
     return(mpcp_errors)
-    stop("At least one MPCP school not properly joined.")
     
     
   } else {
