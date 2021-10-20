@@ -78,7 +78,7 @@ library(RSQLite)
                         842, 
                         672, 
                         536,
-                        427) # Numbers preliminary as of 7/7/2021
+                        429)
   
   chapter_220 <- tibble(school_year, total_enrollment, 
                         accurate_agency_type = "Chapter 220",
@@ -184,6 +184,9 @@ library(RSQLite)
     select(dpi_true_id, city, locale_description) %>%
     unique()
   
+  # This adds city and locale_description from most recent RC data
+  # when RC data isn't available for most recent school year
+  
   guesses <- left_join(schools_no_rc, schools_max_rc)
   
   schools <- schools_rc %>%
@@ -200,7 +203,7 @@ library(RSQLite)
                                                       ifelse(MPCP_percent > 0.749, 1, 0))))) %>% # For MPCP outside of district
     select(-c(ALL_STUDENTS_count, MPCP_count))
   
-  schools <- left_join(schools, grade_levels)
+  schools <- left_join(schools, grade_levels %>% select(-school_name))
   
   nrow(schools_rc) == nrow(schools)
   
