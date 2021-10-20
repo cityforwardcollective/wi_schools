@@ -45,7 +45,7 @@ make_forward_exam <- function() {
     filename <- paste("imports/wsas/private", file, sep = "/")
     
     if (length(choice_forward) == 0) {
-      raw_choice <- read_xlsx(filename, "Opt Out Not Included", skip = 1, col_names = TRUE)
+      raw_choice <- read_xlsx(filename, "Opt Out Included", skip = 1, col_names = TRUE)
       
       raw_choice <- raw_choice %>% 
         select(-contains("%")) %>%
@@ -80,7 +80,7 @@ make_forward_exam <- function() {
         select(-c(enrollment))
     } else {
       
-      raw_choice1 <- read_xlsx(filename, "Opt Out Not Included", skip = 1, col_names = TRUE)
+      raw_choice1 <- read_xlsx(filename, "Opt Out Included", skip = 1, col_names = TRUE)
       
       raw_choice1 <- raw_choice1 %>% select(-contains("%")) %>%
         mutate(dpi_true_id = str_replace_all(str_extract(raw_choice1$`School Name and Number`, "\\(.*\\)$"), "\\(|\\)", ""),
