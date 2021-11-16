@@ -53,54 +53,72 @@ make_report_cards <- function() {
                per_tom = `Percent Two or More Races`,
                per_swd = `Percent Students with Disabilities`,
                per_ed = `Percent Economically Disadvantaged`,
-               per_lep = ifelse("Percent Limited English Proficient" %in% colnames(rc),
-                                `Percent Limited English Proficient`, `Percent English Learners`),
+               per_lep = if ("Percent Limited English Proficient" %in% colnames(rc)) {
+                                `Percent Limited English Proficient`
+                 } else {
+                                  `Percent English Learners`
+                                },
                per_choice = `Percent School Choice Program`,
                per_open = `Percent Open Enrollment`,
-               sch_ach = ifelse("School Student Achievement Score" %in% colnames(rc),
-                                `School Student Achievement Score`, `School Achievement Score`),
+               sch_ach = if ("School Student Achievement Score" %in% colnames(rc)) {
+                 `School Student Achievement Score`
+               } else { `School Achievement Score` },
                sch_ela_ach = `School ELA Achievement Score`,
                sch_math_ach = `School Mathematics Achievement Score`,
-               sch_growth = ifelse("School Student Growth Score" %in% colnames(rc),
-                                   `School Student Growth Score`, `School Growth Score`),
+               sch_growth = if ("School Student Growth Score" %in% colnames(rc)) {
+                 `School Student Growth Score`
+               } else { `School Growth Score` },
                sch_ela_growth = `School ELA Growth Score`,
                sch_math_growth = `School Mathematics Growth Score`,
-               sch_cg = ifelse("School Closing Gaps Score" %in% colnames(rc),
-                               `School Closing Gaps Score`, NA),
-               sch_ela_cg = ifelse("School Closing Gaps Score" %in% colnames(rc),
-                                   `School ELA Gap Score`, NA),
-               sch_math_cg = ifelse("SChool Closing Gaps Score" %in% colnames(rc),
-                                    `School Mathematics Gap Score`, NA),
+               sch_cg = if ("School Closing Gaps Score" %in% colnames(rc)) {
+                 `School Closing Gaps Score`
+               } else { NA },
+               sch_ela_cg = if ("School Closing Gaps Score" %in% colnames(rc)) {
+                 `School ELA Gap Score`
+               } else { NA },
+               sch_math_cg = if ("SChool Closing Gaps Score" %in% colnames(rc)) {
+                 `School Mathematics Gap Score`
+               } else { NA },
                
                # These fields don't exist in all files, so will throw an error
                # without using conditional.
                
-               sch_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                `Target Group Outcomes`, NA),
-               sch_ach_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                    `Target Group Achievement Score`, NA),
-               sch_growth_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                       `Target Group Growth Score`, NA),
-               sch_absenteeism_tgo =ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                           `Target Group Chronic Absenteeism Score`, NA),
-               sch_graduation_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                           `Target Group Graduation Score`, NA),
-               sch_attendance_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                           `Target Group Attendance Score`, NA),
+               sch_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Outcomes Score`
+               } else { NA },
+               sch_ach_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Achievement Score`
+               } else { NA },
+               sch_growth_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Growth Score`
+               } else { NA },
+               sch_absenteeism_tgo =if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Chronic Absenteeism Score`
+               } else { NA },
+               sch_graduation_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Graduation Score`
+               } else { NA },
+               sch_attendance_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Attendance Score`
+               } else { NA },
                sch_4y_grad_gap = if("School 4 Year Graduation Gap Score" %in% colnames(rc)) {
                  `School 4 Year Graduation Gap Score`} else {NA},
                sch_6y_grad_gap = if("School 6 Year Graduation Gap Score" %in% colnames(rc)) {
                  `School 6 Year Graduation Gap Score`} else {NA},
-               sch_grad_gap = ifelse("School Graduation Gap Score" %in% colnames(rc),
-                                     `School Graduation Gap Score`, NA),
-               sch_ot = ifelse("School On-Track and Postsecondary Readiness Score" %in% colnames(rc),
-                               `School On-Track and Postsecondary Readiness Score`, NA),
+               sch_grad_gap = if ("School Graduation Gap Score" %in% colnames(rc)) {
+                 `School Graduation Gap Score`
+               } else { NA },
+               sch_ot = if ("School On-Track and Postsecondary Readiness Score" %in% colnames(rc)) {
+                 `School On-Track and Postsecondary Readiness Score`
+               } else { `School On-Track to Graduation Score` },
                sch_grad_rate = `School Graduation Rate Score`,
                sch_att_rate = `School Attendance Rate Score`,
-               sch_3rd_ela = ifelse("School Third-Grade ELA Achievement Score" %in% colnames(rc),
-                                    `School Third-Grade ELA Achievement Score`, NA),
-               sch_8th_math = ifelse("School Eitght-Grade Mathematics Achievement Score" %in% colnames(rc),
-                                     `School Eighth-Grade Mathematics Achievement Score`, NA),
+               sch_3rd_ela = if ("School Third-Grade ELA Achievement Score" %in% colnames(rc)) {
+                 `School Third-Grade ELA Achievement Score`
+               } else { NA },
+               sch_8th_math = if ("School Eitght-Grade Mathematics Achievement Score" %in% colnames(rc)) {
+                 `School Eighth-Grade Mathematics Achievement Score`
+               } else { NA },
                ach_weight = if("Score weighting Achievement Priority Area" %in% colnames(rc)) {
                  as.numeric(`Score weighting Achievement Priority Area`)} else {NA},
                growth_weight = if("Score weighting Growth Priority Area" %in% colnames(rc)) {
@@ -122,10 +140,12 @@ make_report_cards <- function() {
                school_enrollment = as.numeric(school_enrollment),
                district_enrollment = as.numeric(district_enrollment),
                cg_redacted = ifelse(str_detect(sch_cg, "\\*"), 1, 0),
-               test_participation_ela = ifelse("Test Participation ELA 2021 All Students" %in% colnames(rc),
-                                           as.numeric(`Test Participation ELA 2021 All Students`), NA),
-               test_participation_math = ifelse("Test Participation Mathematics 2021 All Students" %in% colnames(rc),
-                                                as.numeric(`Test Participation Mathematics 2021 All Students`), NA)) %>%
+               test_participation_ela = if ("Test Participation ELA 2021 All Students" %in% colnames(rc)) {
+                 as.numeric(`Test Participation ELA 2021 All Students`)
+               } else { NA },
+               test_participation_math = if ("Test Participation Mathematics 2021 All Students" %in% colnames(rc)) {
+                 as.numeric(`Test Participation Mathematics 2021 All Students`)
+               } else { NA }) %>%
         mutate_at(vars("per_am_in":"per_open"), funs(round(as.numeric(.), 2))) %>%
         mutate_at(vars("sch_ach":"sch_8th_math"), funs(round(as.numeric(.), 1))) %>%
         
@@ -223,54 +243,72 @@ make_report_cards <- function() {
                per_tom = `Percent Two or More Races`,
                per_swd = `Percent Students with Disabilities`,
                per_ed = `Percent Economically Disadvantaged`,
-               per_lep = ifelse("Percent Limited English Proficient" %in% colnames(rc),
-                                `Percent Limited English Proficient`, `Percent English Learners`),
+               per_lep = if ("Percent Limited English Proficient" %in% colnames(rc)) {
+                 `Percent Limited English Proficient`
+               } else {
+                 `Percent English Learners`
+               },
                per_choice = `Percent School Choice Program`,
                per_open = `Percent Open Enrollment`,
-               sch_ach = ifelse("School Student Achievement Score" %in% colnames(rc),
-                                `School Student Achievement Score`, `School Achievement Score`),
+               sch_ach = if ("School Student Achievement Score" %in% colnames(rc)) {
+                 `School Student Achievement Score`
+               } else { `School Achievement Score` },
                sch_ela_ach = `School ELA Achievement Score`,
                sch_math_ach = `School Mathematics Achievement Score`,
-               sch_growth = ifelse("School Student Growth Score" %in% colnames(rc),
-                                   `School Student Growth Score`, `School Growth Score`),
+               sch_growth = if ("School Student Growth Score" %in% colnames(rc)) {
+                 `School Student Growth Score`
+               } else { `School Growth Score` },
                sch_ela_growth = `School ELA Growth Score`,
                sch_math_growth = `School Mathematics Growth Score`,
-               sch_cg = ifelse("School Closing Gaps Score" %in% colnames(rc),
-                               `School Closing Gaps Score`, NA),
-               sch_ela_cg = ifelse("School Closing Gaps Score" %in% colnames(rc),
-                                   `School ELA Gap Score`, NA),
-               sch_math_cg = ifelse("SChool Closing Gaps Score" %in% colnames(rc),
-                                    `School Mathematics Gap Score`, NA),
+               sch_cg = if ("School Closing Gaps Score" %in% colnames(rc)) {
+                 `School Closing Gaps Score`
+               } else { NA },
+               sch_ela_cg = if ("School Closing Gaps Score" %in% colnames(rc)) {
+                 `School ELA Gap Score`
+               } else { NA },
+               sch_math_cg = if ("SChool Closing Gaps Score" %in% colnames(rc)) {
+                 `School Mathematics Gap Score`
+               } else { NA },
                
                # These fields don't exist in all files, so will throw an error
                # without using conditional.
                
-               sch_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                `Target Group Outcomes`, NA),
-               sch_ach_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                    `Target Group Achievement Score`, NA),
-               sch_growth_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                       `Target Group Growth Score`, NA),
-               sch_absenteeism_tgo =ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                           `Target Group Chronic Absenteeism Score`, NA),
-               sch_graduation_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                           `Target Group Graduation Score`, NA),
-               sch_attendance_tgo = ifelse("Target Group Outcomes Score" %in% colnames(rc),
-                                           `Target Group Attendance Score`, NA),
+               sch_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Outcomes Score`
+               } else { NA },
+               sch_ach_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Achievement Score`
+               } else { NA },
+               sch_growth_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Growth Score`
+               } else { NA },
+               sch_absenteeism_tgo =if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Chronic Absenteeism Score`
+               } else { NA },
+               sch_graduation_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Graduation Score`
+               } else { NA },
+               sch_attendance_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+                 `School Target Group Attendance Score`
+               } else { NA },
                sch_4y_grad_gap = if("School 4 Year Graduation Gap Score" %in% colnames(rc)) {
                  `School 4 Year Graduation Gap Score`} else {NA},
                sch_6y_grad_gap = if("School 6 Year Graduation Gap Score" %in% colnames(rc)) {
                  `School 6 Year Graduation Gap Score`} else {NA},
-               sch_grad_gap = ifelse("School Graduation Gap Score" %in% colnames(rc),
-                                     `School Graduation Gap Score`, NA),
-               sch_ot = ifelse("School On-Track and Postsecondary Readiness Score" %in% colnames(rc),
-                               `School On-Track and Postsecondary Readiness Score`, NA),
+               sch_grad_gap = if ("School Graduation Gap Score" %in% colnames(rc)) {
+                 `School Graduation Gap Score`
+               } else { NA },
+               sch_ot = if ("School On-Track and Postsecondary Readiness Score" %in% colnames(rc)) {
+                 `School On-Track and Postsecondary Readiness Score`
+               } else { `School On-Track to Graduation Score` },
                sch_grad_rate = `School Graduation Rate Score`,
                sch_att_rate = `School Attendance Rate Score`,
-               sch_3rd_ela = ifelse("School Third-Grade ELA Achievement Score" %in% colnames(rc),
-                                    `School Third-Grade ELA Achievement Score`, NA),
-               sch_8th_math = ifelse("School Eitght-Grade Mathematics Achievement Score" %in% colnames(rc),
-                                     `School Eighth-Grade Mathematics Achievement Score`, NA),
+               sch_3rd_ela = if ("School Third-Grade ELA Achievement Score" %in% colnames(rc)) {
+                 `School Third-Grade ELA Achievement Score`
+               } else { NA },
+               sch_8th_math = if ("School Eitght-Grade Mathematics Achievement Score" %in% colnames(rc)) {
+                 `School Eighth-Grade Mathematics Achievement Score`
+               } else { NA },
                ach_weight = if("Score weighting Achievement Priority Area" %in% colnames(rc)) {
                  as.numeric(`Score weighting Achievement Priority Area`)} else {NA},
                growth_weight = if("Score weighting Growth Priority Area" %in% colnames(rc)) {
@@ -292,10 +330,12 @@ make_report_cards <- function() {
                school_enrollment = as.numeric(school_enrollment),
                district_enrollment = as.numeric(district_enrollment),
                cg_redacted = ifelse(str_detect(sch_cg, "\\*"), 1, 0),
-               test_participation_ela = ifelse("Test Participation ELA 2021 All Students" %in% colnames(rc),
-                                               as.numeric(`Test Participation ELA 2021 All Students`), NA),
-               test_participation_math = ifelse("Test Participation Mathematics 2021 All Students" %in% colnames(rc),
-                                                as.numeric(`Test Participation Mathematics 2021 All Students`), NA)) %>%
+               test_participation_ela = if ("Test Participation ELA 2021 All Students" %in% colnames(rc)) {
+                 as.numeric(`Test Participation ELA 2021 All Students`)
+               } else { NA },
+               test_participation_math = if ("Test Participation Mathematics 2021 All Students" %in% colnames(rc)) {
+                 as.numeric(`Test Participation Mathematics 2021 All Students`)
+               } else { NA }) %>%
         mutate_at(vars("per_am_in":"per_open"), funs(round(as.numeric(.), 2))) %>%
         mutate_at(vars("sch_ach":"sch_8th_math"), funs(round(as.numeric(.), 1))) %>%
         select(school_year,
