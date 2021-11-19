@@ -19,6 +19,7 @@ make_open_enrollment <- function() {
       open_enrollment <- read_xlsx(filename, skip = 4)
       
       names(open_enrollment) <- tolower(names(open_enrollment))
+      names(open_enrollment) <- str_replace_all(names(open_enrollment), "district no", "dist no")
       names(open_enrollment) <- str_replace_all(string = names(open_enrollment), " ", "_")
       
       open_enrollment <- open_enrollment %>%
@@ -32,6 +33,7 @@ make_open_enrollment <- function() {
       oe <- read_xlsx(filename, skip = 4)
       
       names(oe) <- tolower(names(oe))
+      names(oe) <- str_replace_all(names(oe), "district no", "dist no")
       names(oe) <- str_replace_all(string = names(oe), " ", "_")
       
       oe <- oe %>%
