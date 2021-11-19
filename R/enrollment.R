@@ -69,6 +69,7 @@ make_enrollment <- function() {
           summarise(STUDENT_COUNT = sum(STUDENT_COUNT))
         
         grade_level <- temp %>%
+          filter(GRADE_LEVEL != "All Grades" & GROUP_BY == "All Students") %>%
           mutate(GROUP_BY = "Grade Level",
                  GROUP_BY_VALUE = GRADE_LEVEL) %>%
           group_by(SCHOOL_YEAR,
