@@ -115,9 +115,13 @@ make_report_cards <- function() {
                sch_att_rate = `School Attendance Rate Score`,
                sch_3rd_ela = if ("School Third-Grade ELA Achievement Score" %in% colnames(rc)) {
                  `School Third-Grade ELA Achievement Score`
+               } else if ("School 3rd Grade ELA Achievement Score" %in% colnames(rc)) {
+                 `School 3rd Grade ELA Achievement Score`
                } else { NA },
-               sch_8th_math = if ("School Eitght-Grade Mathematics Achievement Score" %in% colnames(rc)) {
+               sch_8th_math = if ("School Eighth-Grade Mathematics Achievement Score" %in% colnames(rc)) {
                  `School Eighth-Grade Mathematics Achievement Score`
+               } else if ("School 8th Grade Mathematics Achievement Score" %in% colnames(rc)) {
+                 `School 8th Grade Mathematics Achievement Score`
                } else { NA },
                ach_weight = if("Score weighting Achievement Priority Area" %in% colnames(rc)) {
                  as.numeric(`Score weighting Achievement Priority Area`)} else {NA},
@@ -125,8 +129,14 @@ make_report_cards <- function() {
                  as.numeric(`Score weighting Growth Priority Area`)} else {NA},
                cg_weight = if("Score weighting Closing Gaps Priority Area" %in% colnames(rc)) {
                  as.numeric(`Score weighting Closing Gaps Priority Area`)} else {NA},
+               tgo_weight = if("Score weighting Target Group Outcomes Priority Area" %in% colnames(rc)) {
+                 as.numeric(`Score weighting Target Group Outcomes Priority Area`)} else {NA},
                ot_weight = if("Score weighting Ontrack Priority Area" %in% colnames(rc)) {
-                 as.numeric(`Score weighting Ontrack Priority Area`)} else {NA},
+                 as.numeric(`Score weighting Ontrack Priority Area`)} else if (
+                   "Score weighting On-Track Priority Area" %in% colnames(rc)
+                   ) {
+                     as.numeric(`Score weighting On-Track Priority Area`)}
+                 else {NA},
                locale_description = `Locale description`,
                city = City,
                report_card_type = if("Report Card Type" %in% colnames(rc)) {
@@ -146,7 +156,7 @@ make_report_cards <- function() {
                test_participation_math = if ("Test Participation Mathematics 2021 All Students" %in% colnames(rc)) {
                  as.numeric(`Test Participation Mathematics 2021 All Students`)
                } else { NA }) %>%
-        mutate_at(vars("per_am_in":"per_open"), funs(round(as.numeric(.), 2))) %>%
+        mutate_at(vars("per_am_in":"per_open"), funs(round(as.numeric(.), 3))) %>%
         mutate_at(vars("sch_ach":"sch_8th_math"), funs(round(as.numeric(.), 1))) %>%
         
         # Since `mutate` was used above, columns were created instead of
@@ -204,6 +214,7 @@ make_report_cards <- function() {
                ach_weight,
                growth_weight,
                cg_weight,
+               tgo_weight,
                ot_weight,
                locale_description,
                city,
@@ -305,9 +316,13 @@ make_report_cards <- function() {
                sch_att_rate = `School Attendance Rate Score`,
                sch_3rd_ela = if ("School Third-Grade ELA Achievement Score" %in% colnames(rc)) {
                  `School Third-Grade ELA Achievement Score`
+               } else if ("School 3rd Grade ELA Achievement Score" %in% colnames(rc)) {
+                 `School 3rd Grade ELA Achievement Score`
                } else { NA },
-               sch_8th_math = if ("School Eitght-Grade Mathematics Achievement Score" %in% colnames(rc)) {
+               sch_8th_math = if ("School Eighth-Grade Mathematics Achievement Score" %in% colnames(rc)) {
                  `School Eighth-Grade Mathematics Achievement Score`
+               } else if ("School 8th Grade Mathematics Achievement Score" %in% colnames(rc)) {
+                 `School 8th Grade Mathematics Achievement Score`
                } else { NA },
                ach_weight = if("Score weighting Achievement Priority Area" %in% colnames(rc)) {
                  as.numeric(`Score weighting Achievement Priority Area`)} else {NA},
@@ -315,8 +330,14 @@ make_report_cards <- function() {
                  as.numeric(`Score weighting Growth Priority Area`)} else {NA},
                cg_weight = if("Score weighting Closing Gaps Priority Area" %in% colnames(rc)) {
                  as.numeric(`Score weighting Closing Gaps Priority Area`)} else {NA},
+               tgo_weight = if("Score weighting Target Group Outcomes Priority Area" %in% colnames(rc)) {
+                 as.numeric(`Score weighting Target Group Outcomes Priority Area`)} else {NA},
                ot_weight = if("Score weighting Ontrack Priority Area" %in% colnames(rc)) {
-                 as.numeric(`Score weighting Ontrack Priority Area`)} else {NA},
+                 as.numeric(`Score weighting Ontrack Priority Area`)} else if (
+                   "Score weighting On-Track Priority Area" %in% colnames(rc)
+                 ) {
+                   as.numeric(`Score weighting On-Track Priority Area`)}
+               else {NA},
                locale_description = `Locale description`,
                city = City,
                report_card_type = if("Report Card Type" %in% colnames(rc)) {
@@ -336,8 +357,14 @@ make_report_cards <- function() {
                test_participation_math = if ("Test Participation Mathematics 2021 All Students" %in% colnames(rc)) {
                  as.numeric(`Test Participation Mathematics 2021 All Students`)
                } else { NA }) %>%
-        mutate_at(vars("per_am_in":"per_open"), funs(round(as.numeric(.), 2))) %>%
+        mutate_at(vars("per_am_in":"per_open"), funs(round(as.numeric(.), 3))) %>%
         mutate_at(vars("sch_ach":"sch_8th_math"), funs(round(as.numeric(.), 1))) %>%
+        
+        # Since `mutate` was used above, columns were created instead of
+        # being renamed.  Using select drops all original columns and leaves
+        # just those we are interested in; also, using column names facilitates
+        # functionality across files where column indices might differ.
+        
         select(school_year,
                dpi_true_id,
                district_name,
@@ -388,6 +415,7 @@ make_report_cards <- function() {
                ach_weight,
                growth_weight,
                cg_weight,
+               tgo_weight,
                ot_weight,
                locale_description,
                city,
