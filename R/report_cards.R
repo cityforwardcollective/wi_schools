@@ -137,6 +137,9 @@ make_report_cards <- function() {
                    ) {
                      as.numeric(`Score weighting On-Track Priority Area`)}
                  else {NA},
+               studend_engagment_ind_deductions = if ("Student Engagement Indicators Deduction" %in% colnames(rc)) {
+                 `Student Engagement Indicators Deduction`
+               } else {NA},
                locale_description = `Locale description`,
                city = City,
                report_card_type = if("Report Card Type" %in% colnames(rc)) {
@@ -216,6 +219,7 @@ make_report_cards <- function() {
                cg_weight,
                tgo_weight,
                ot_weight,
+               studend_engagment_ind_deductions,
                locale_description,
                city,
                report_card_type,
@@ -338,6 +342,9 @@ make_report_cards <- function() {
                  ) {
                    as.numeric(`Score weighting On-Track Priority Area`)}
                else {NA},
+               studend_engagment_ind_deductions = if ("Student Engagement Indicators Deduction" %in% colnames(rc)) {
+                 `Student Engagement Indicators Deduction`
+               } else {NA},
                locale_description = `Locale description`,
                city = City,
                report_card_type = if("Report Card Type" %in% colnames(rc)) {
@@ -417,6 +424,7 @@ make_report_cards <- function() {
                cg_weight,
                tgo_weight,
                ot_weight,
+               studend_engagment_ind_deductions,
                locale_description,
                city,
                report_card_type,
