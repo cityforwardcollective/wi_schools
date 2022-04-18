@@ -203,7 +203,8 @@ library(RSQLite)
                                                       ifelse(MPCP_percent > 0.749, 1, 0))))) %>% # For MPCP outside of district
     select(-c(ALL_STUDENTS_count, MPCP_count))
   
-  schools <- left_join(schools, grade_levels %>% select(-school_name))
+  schools <- left_join(schools, grade_levels %>% select(-school_name)) %>%
+    arrange(school_name, school_year)
   
   nrow(schools_rc) == nrow(schools)
   

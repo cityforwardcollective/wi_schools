@@ -5,12 +5,17 @@
 library(tidyverse)
 library(readxl)
 
+options(dplyr.summarise.inform = FALSE)
+
+log <- NULL
+
 make_enrollment <- function() {
   
   files <- list.files(path = "imports/e1")
   
-  all_enrollment <- map_df(files, function(x) {
+  all_enrollment <- map_df(files[1:13], function(x) {
     
+
     x <- paste0("imports/e1/", x)
     
     # Starting in 2020-21, Private Enrollment file format changed to CSV
@@ -88,7 +93,8 @@ make_enrollment <- function() {
                    GROUP_BY_VALUE) %>%
             summarise(STUDENT_COUNT = sum(STUDENT_COUNT))
         
-        t <- bind_rows(gender, grade_level)
+        t <- bind_rows(gender, grade_level) %>%
+          ungroup()
           
         
         temp <- t %>%
@@ -183,6 +189,7 @@ make_enrollment <- function() {
                                     TRUE ~ "Grade Level"))
     }
     
+    
   })
   
   all_enrollment <- all_enrollment %>%
@@ -194,3 +201,5 @@ make_enrollment <- function() {
 }
 
 all_enrollment <- make_enrollment()
+
+
