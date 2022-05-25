@@ -56,6 +56,12 @@ library(RSQLite)
   
   source("R/wsas.R")
   
+  # Public Aspire
+  
+  source("R/aspire.R")
+  
+  forward_exam <- bind_rows(forward_exam, aspire) 
+  
   # ACT
   
   source("R/act.R")

@@ -120,8 +120,7 @@ make_forward_exam <- function() {
     
   }
   
-  choice_forward <- choice_forward %>%
-    filter(test_group == "Forward")
+  choice_forward <- choice_forward 
   
   
   # Public Schools ====
