@@ -13,7 +13,7 @@ make_enrollment <- function() {
   
   files <- list.files(path = "imports/e1")
   
-  all_enrollment <- map_df(files[1:13], function(x) {
+  all_enrollment <- map_df(files, function(x) {
     
 
     x <- paste0("imports/e1/", x)

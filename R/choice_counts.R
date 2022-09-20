@@ -6,7 +6,8 @@
 library(tidyverse)
 
 make_choice_counts <- function() {
-  choice_names <- read_csv("imports/choice_names.csv")
+  choice_names <- read_csv("imports/choice_names.csv") %>%
+    select(-ALL_STUDENTS_count)
   
   files <- list.files(path = "imports/choice_counts")
   
