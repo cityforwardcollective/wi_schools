@@ -36,6 +36,7 @@ make_forward_exam <- function() {
     
     x <- x %>%
       mutate_at(8:12, as.integer) %>%
+      mutate_at(6:7, as.character) |> 
       mutate(group_count = `No Test` + `Below Basic` + Basic + Proficient + Advanced) %>%
       gather(key = "test_result", value = "student_count", `No Test`:Advanced)
   }
@@ -43,6 +44,7 @@ make_forward_exam <- function() {
   for (file in files) {
     
     filename <- paste("imports/wsas/private", file, sep = "/")
+    cat(crayon::cyan("Starting ", filename, "\n"))
     
     if (length(choice_forward) == 0) {
       raw_choice <- read_xlsx(filename, "Opt Out Included", skip = 1, col_names = TRUE)
@@ -72,7 +74,7 @@ make_forward_exam <- function() {
                                           ifelse(grade %in% 9:10, "Aspire",
                                                  ifelse(grade == 11, "ACT",
                                                         "ERROR")))),
-               opt_outs_excluded = enrollment - parent_opt_out,
+               opt_outs_excluded = as.numeric(enrollment) - as.numeric(parent_opt_out),
                group_by = "All Students",
                group_by_value = "All Students") %>%
         modify_at("student_count", as.integer) %>%
@@ -106,7 +108,7 @@ make_forward_exam <- function() {
                                           ifelse(grade %in% 9:10, "Aspire",
                                                  ifelse(grade == 11, "ACT",
                                                         "ERROR")))),
-               opt_outs_excluded = enrollment - parent_opt_out,
+               opt_outs_excluded = as.numeric(enrollment) - as.numeric(parent_opt_out),
                group_by = "All Students",
                group_by_value = "All Students") %>%
         modify_at("student_count", as.integer) %>%
@@ -133,6 +135,8 @@ make_forward_exam <- function() {
   for (file in files) {
     
     filename <- paste("imports/wsas/public", file, sep = "/")
+    cat(crayon::cyan("Starting ", filename, "\n"))
+    
     
     if (is.null("public_forward")) {
       raw_public <- read_csv(filename, col_types = list("c",
