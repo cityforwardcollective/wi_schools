@@ -77,14 +77,16 @@ library(RSQLite)
                    "2017-18", 
                    "2018-19", 
                    "2019-20",
-                   "2020-21")
+                   "2020-21",
+                   "2021-22")
   
   total_enrollment <- c(1266, 
                         1038, 
                         842, 
                         672, 
                         536,
-                        429)
+                        429,
+                        312)
   
   chapter_220 <- tibble(school_year, total_enrollment, 
                         accurate_agency_type = "Chapter 220",
