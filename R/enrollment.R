@@ -57,6 +57,7 @@ make_enrollment <- function() {
         # Handle Private CSV
       
         gender <- temp %>%
+          filter(GRADE_LEVEL != "All Grades" & GROUP_BY != "All Students") |> 
           group_by(SCHOOL_YEAR,
                    AGENCY_TYPE,
                    CESA,
@@ -66,6 +67,7 @@ make_enrollment <- function() {
                    DISTRICT_CODE,
                    SCHOOL_CODE,
                    GRADE_GROUP,
+                   GRADE_LEVEL,
                    CHOICE_IND,
                    DISTRICT_NAME,
                    SCHOOL_NAME,
@@ -93,7 +95,27 @@ make_enrollment <- function() {
                    GROUP_BY_VALUE) %>%
             summarise(STUDENT_COUNT = sum(STUDENT_COUNT))
         
-        t <- bind_rows(gender, grade_level) %>%
+        all <- temp %>%
+          filter(GRADE_LEVEL == "All Grades" & GROUP_BY == "All Students") %>%
+          mutate(GROUP_BY = "All Students",
+                 GROUP_BY_VALUE = "All Students") %>%
+          group_by(SCHOOL_YEAR,
+                   AGENCY_TYPE,
+                   CESA,
+                   COUNTY_CODE,
+                   COUNTY,
+                   CITY,
+                   DISTRICT_CODE,
+                   SCHOOL_CODE,
+                   GRADE_GROUP,
+                   CHOICE_IND,
+                   DISTRICT_NAME,
+                   SCHOOL_NAME,
+                   GROUP_BY,
+                   GROUP_BY_VALUE) %>%
+          summarise(STUDENT_COUNT = sum(STUDENT_COUNT))
+        
+        t <- bind_rows(gender, grade_level, all) %>%
           ungroup()
           
         
