@@ -4,3 +4,4 @@
 .Ruserdata
 imports/*
 *.sqlite
+*.DS_Store*
