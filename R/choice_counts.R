@@ -2,6 +2,8 @@
 # Source: https://dpi.wi.gov/sms/choice-programs/data
 #
 # NOTE: Uses 3rd Friday Head Count
+#
+# Download choice counts, add and clean to imports/choice_names.csv
 
 library(tidyverse)
 
@@ -28,7 +30,9 @@ make_choice_counts <- function() {
                "MPCP_count" = `Headcount...5`,
                "ALL_STUDENTS_count" = `Headcount...10`) %>%
         mutate(school_year = year) %>%
-        left_join(., choice_names %>% filter(school_year == "2015-16") %>% select(-c(school_year, contains("count"))))
+        left_join(., choice_names %>% 
+                    filter(school_year == "2015-16") %>% 
+                    select(-c(school_year, contains("count"))))
       
       
       choice_counts <- bind_rows(choice_counts, cc)
@@ -68,10 +72,8 @@ make_choice_counts <- function() {
     filter(is.na(dpi_true_id) & !is.na(MPCP_count))
   
   if (nrow(mpcp_errors) > 0) {
-    
-    warning("At least one MPCP school not properly joined.")
-    
-    return(mpcp_errors)
+    mpcp_errors <<- mpcp_errors
+    stop("At least one MPCP school not properly joined.")
     
     
   } else {

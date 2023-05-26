@@ -192,10 +192,9 @@ library(RSQLite)
     select(dpi_true_id, city, locale_description) %>%
     unique()
   
-  # This adds city and locale_description from most recent RC data
-  # when RC data isn't available for most recent school year
-  
   guesses <- left_join(schools_no_rc, schools_max_rc)
+  
+  #####
   
   schools <- schools_rc %>%
     filter(school_year %in% rc_years) %>%
@@ -211,7 +210,29 @@ library(RSQLite)
                                                       ifelse(MPCP_percent > 0.749, 1, 0))))) %>% # For MPCP outside of district
     select(-c(ALL_STUDENTS_count, MPCP_count))
   
-  schools <- left_join(schools, grade_levels %>% select(-school_name)) %>%
+  max_sy <- schools |> 
+    filter(school_year == max(school_year) & 
+             !accurate_agency_type %in% c("Private", "Traditional Public"))
+  
+  year <- unique(max_sy$school_year) |> 
+    str_extract(pattern = "\\d{4}") |> 
+    as.numeric()
+  
+  ly_mke <- schools |> 
+    filter(school_year ==  glue::glue("{year - 1}-{year-2000}") &
+             milwaukee_indicator == 1) |> 
+    select(school_name, agency_type, county, milwaukee_indicator,
+           city, locale_description)
+  
+  with_last <- left_join(max_sy |> 
+              select(-c(milwaukee_indicator, city, locale_description)),
+            ly_mke)
+  
+  schools <- anti_join(schools,
+                       with_last |> 
+                         select(school_year, dpi_true_id)) |> 
+    bind_rows(with_last) |> 
+    left_join(grade_levels %>% select(-school_name)) %>%
     arrange(school_name, school_year)
   
   nrow(schools_rc) == nrow(schools)
@@ -274,9 +295,15 @@ library(RSQLite)
   
   act <- readRDS("imports/act.rds")
   
+  if (Sys.info()['sysname'] == "Darwin") {
+    f <- "../wisconsink12/data/school_data.RData"
+  } else {
+    f <- "C:/Users/Spencer/repor/wisconsink12/data/school_data.RData"
+  }
+  
   save(list = c("schools", "enrollment", "attendance", "discipline", "retention",
                 "report_cards", "forward_exam", "graduation", "choice_counts", "other_enrollment", "act"),
-       file = "C:/Users/Spencer/repor/wisconsink12/data/school_data.RData")
+       file = f)
   
   dbDisconnect(school_db)
   
