@@ -120,9 +120,30 @@ library(RSQLite)
   ## but the students are tracked in "home school" SIS, so it doesn't
   ## have a school code/appear in reports.
   
-  other_schools <- read_csv("imports/inst_partner_schools.csv") %>%
+  o_schools <- read_csv("imports/inst_partner_schools.csv") %>%
     filter(!is.na(dpi_true_id)) %>%
     select(-school_name)
+  
+  others <- read_csv("imports/INST_NONI_2012_to_Current.csv", 
+                     name_repair = janitor::make_clean_names)
+  inst <- others |> 
+    mutate(dpi_true_id = glue::glue("{district_code}_{school_code}"),
+           school_year = glue::glue("{year - 1}-{str_extract(year, '[:digit:]{2}$')}")) |> 
+    transmute(school_year,
+           dpi_true_id,
+           accurate_agency_type = ifelse(instrumentality_status == "instrumentality",
+                                         "Instrumentality Charter", 
+                                         instrumentality_status)) |> 
+    filter(accurate_agency_type == "Instrumentality Charter")
+  
+  other_schools <- o_schools |> 
+    filter(accurate_agency_type != "Instrumentality Charter") |> 
+    bind_rows(inst)
+  
+  other_schools |> 
+    filter(school_year > "2020-21") |> 
+    group_by(accurate_agency_type, school_year) |> 
+    count()
   
   
   ## All fields sourced from Enrollment reports
