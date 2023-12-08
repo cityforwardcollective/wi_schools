@@ -1,4 +1,5 @@
 library(tidyverse)
+library(janitor)
 library(readxl)
 
 make_report_cards <- function() {
@@ -450,13 +451,24 @@ make_report_cards <- function() {
   # Fix Excel grade band to date madness
   
   rc_renamed <- rc_renamed %>%
-    mutate(grade_band = case_when(grade_band == "42898" ~ "6-12",
-                                  grade_band == "42990" ~ "9-12",
-                                  grade_band == "42894" ~ "6-8",
-                                  grade_band == "43628" ~ "6-12",
-                                  grade_band == "43624" ~ "6-8",
-                                  grade_band == "43720" ~ "9-12",
-                                  TRUE ~ grade_band))
+    # janitor::excel_numeric_to_date(grade_band) |> 
+    # format.Date("%m-%d") |> 
+    # stringr::str_remove_all("^0|(?<=-)0")
+    mutate(grade_band = case_when(!is.na(as.numeric(grade_band)) ~ excel_numeric_to_date(as.numeric(grade_band)) |> 
+                                    format.Date("%m-%d") |> 
+                                    str_remove_all("^0|(?<=-)0"),
+                                    TRUE ~ grade_band))
+    # mutate(grade_band = case_when(grade_band == "45085" ~ "6-8",
+    #                               grade_band == "45089" ~ "6-12",
+    #                               grade_band == "45181" ~ "9-12",
+    # 
+    #                               grade_band == "42898" ~ "6-12",
+    #                               grade_band == "42990" ~ "9-12",
+    #                               grade_band == "42894" ~ "6-8",
+    #                               grade_band == "43628" ~ "6-12",
+    #                               grade_band == "43624" ~ "6-8",
+    #                               grade_band == "43720" ~ "9-12",
+    #                               TRUE ~ grade_band))
   
   return(rc_renamed)
 }
