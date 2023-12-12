@@ -258,6 +258,10 @@ library(RSQLite)
   
   nrow(schools_rc) == nrow(schools)
   
+  # geocoded schools
+  
+  geo <- readRDS("imports/wi_schools_geocoded_2023-24.rda")
+  
   # Build Database
   
   school_db <- dbConnect(RSQLite::SQLite(), "school_db.sqlite")
@@ -283,6 +287,8 @@ library(RSQLite)
   dbWriteTable(school_db, "choice_counts", choice_counts, overwrite = TRUE)
   
   dbWriteTable(school_db, "other_enrollment", other_enrollment, overwrite = TRUE)
+  
+  dbWriteTable(school_db, "geocodes", geo, overwrite = TRUE)
   
   tables <- dbListTables(school_db)
   
@@ -314,6 +320,8 @@ library(RSQLite)
   
   other_enrollment <- readRDS("imports/other_enrollment.rds")
   
+  geocodes <- readRDS("imports/geocodes.rds")
+  
   act <- readRDS("imports/act.rds")
   
   if (Sys.info()['sysname'] == "Darwin") {
@@ -323,7 +331,8 @@ library(RSQLite)
   }
   
   save(list = c("schools", "enrollment", "attendance", "discipline", "retention",
-                "report_cards", "forward_exam", "graduation", "choice_counts", "other_enrollment", "act"),
+                "report_cards", "forward_exam", "graduation", "choice_counts", 
+                "other_enrollment", "act", "geocodes"),
        file = f)
   
   dbDisconnect(school_db)
