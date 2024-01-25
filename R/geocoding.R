@@ -25,7 +25,9 @@ dirs <- map_df(do_files, function(f) {
   
   d <- read_csv(fn, name_repair = janitor::make_clean_names) |> 
     mutate(school_year = school_year,
-           district_code = ifelse(organization_type == "Private school",
+           # note that I haven't geocoded with this corrected for Private school
+           # coding, I fixed it after the fact.
+           district_code = ifelse(str_detect(organization_type, "Private"),
                                   "0000",
                                   lea_code),
            school_code = str_pad(school_code, side = "left", pad = "0", width = 4),
@@ -48,6 +50,18 @@ gc <- added |>
           method = "arcgis")
 
 saveRDS(gc, "imports/wi_schools_geocoded_all_data_2023-24.rda")
+
+gc <- read_rds("imports/wi_schools_geocoded_all_data_2023-24.rda")
+
+# fix private schools
+gc <- gc |> 
+  mutate(dpi_true_id = case_when(
+    organization_type == "Private School" ~ str_replace(
+      dpi_true_id, "^\\d{4}", "0000"
+    ), 
+    TRUE ~ dpi_true_id))
+
+saveRDS(gc, "imports/wi_schools_geocoded_all_data_2023-24_good_ids.rda")
 
 gc |> 
   filter(is.na(lat))
