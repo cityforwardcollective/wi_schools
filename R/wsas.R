@@ -69,11 +69,21 @@ make_forward_exam <- function() {
       
       choice_gathered <- bind_rows(choice_gathered, .id = "test_subject")
       choice_forward <- choice_gathered %>%
-        mutate(test_group = ifelse(grade %in% 3:8, "Forward",
-                                   ifelse(grade == 10 & test_subject == "social studies", "Forward",
-                                          ifelse(grade %in% 9:10, "Aspire",
-                                                 ifelse(grade == 11, "ACT",
-                                                        "ERROR")))),
+        mutate(
+          # old nested if-else replaced with case_when
+          # test_group = ifelse(grade %in% 3:8, "Forward",
+          #                          ifelse(grade == 10 & test_subject == "social studies", "Forward",
+          #                                 ifelse(grade %in% 9:10, "Aspire",
+          #                                        ifelse(grade == 11, "ACT",
+          #                                               "ERROR")))),
+               test_group = case_when(
+                 grade %in% 3:8 ~ "Forward",
+                 grade == 10 & test_subject == "social studies" ~ "Forward",
+                 grade %in% 9:10 & school_year < "2019-20" ~ "Aspire",
+                 grade %in% 9:10 & school_year >= "2019-20" ~ "PreACT",
+                 grade == 11 ~ "ACT",
+                 TRUE ~ "ERROR"
+               ),
                opt_outs_excluded = as.numeric(enrollment) - as.numeric(parent_opt_out),
                group_by = "All Students",
                group_by_value = "All Students") %>%
@@ -103,11 +113,20 @@ make_forward_exam <- function() {
       
       choice1_gathered <- bind_rows(choice1_gathered, .id = "test_subject")
       choice1_forward <- choice1_gathered %>%
-        mutate(test_group = ifelse(grade %in% 3:8, "Forward",
-                                   ifelse(grade == 10 & test_subject == "social studies", "Forward",
-                                          ifelse(grade %in% 9:10, "Aspire",
-                                                 ifelse(grade == 11, "ACT",
-                                                        "ERROR")))),
+        mutate(
+          # test_group = ifelse(grade %in% 3:8, "Forward",
+          #                          ifelse(grade == 10 & test_subject == "social studies", "Forward",
+          #                                 ifelse(grade %in% 9:10, "Aspire",
+          #                                        ifelse(grade == 11, "ACT",
+          #                                               "ERROR")))),
+          test_group = case_when(
+            grade %in% 3:8 ~ "Forward",
+            grade == 10 & test_subject == "social studies" ~ "Forward",
+            grade %in% 9:10 & school_year < "2019-20" ~ "Aspire",
+            grade %in% 9:10 & school_year >= "2019-20" ~ "PreACT",
+            grade == 11 ~ "ACT",
+            TRUE ~ "ERROR"
+          ),
                opt_outs_excluded = as.numeric(enrollment) - as.numeric(parent_opt_out),
                group_by = "All Students",
                group_by_value = "All Students") %>%

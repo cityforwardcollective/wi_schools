@@ -30,6 +30,7 @@ make_aspire <- function() {
                dpi_true_id = paste(district_code, school_code, sep = "_")) %>%
         select(school_year,
                dpi_true_id,
+               grade = grade_level,
                test_subject,
                test_result,
                test_group,
@@ -51,6 +52,7 @@ make_aspire <- function() {
                dpi_true_id = paste(district_code, school_code, sep = "_")) %>%
         select(school_year,
                dpi_true_id,
+               grade = grade_level,
                test_subject,
                test_result,
                test_group,
@@ -67,7 +69,8 @@ make_aspire <- function() {
   
   public_act$average_score <- as.numeric(public_act$average_score)
   act <- public_act %>%
-    mutate(test_group = ifelse(test_group == "ASPIRE", "Aspire", test_group)) %>%
+    mutate(test_group = ifelse(test_group == "ASPIRE", "Aspire", test_group),
+           grade = as.character(grade)) %>%
     select(-average_score)
 
   return(act)  
