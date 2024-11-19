@@ -39,9 +39,15 @@ make_report_cards <- function() {
                school_name = `School Name`,
                overall_score = `Overall Accountability Score`,
                overall_rating = `Overall Accountability Rating`,
-               lowest_grade = `Lowest Grade in the School`,
-               highest_grade = `Highest Grade in the School`,
-               grade_band = `Grade Band for Comparison Schools`,
+               lowest_grade = if ("Lowest Grade Level" %in% colnames(rc)) {
+                 `Lowest Grade Level`
+               } else {`Lowest Grade in the School`},
+               highest_grade = if ("Highest Grade Level" %in% colnames(rc)) {
+                 `Highest Grade Level`
+               } else {`Highest Grade in the School`},
+               grade_band = if ("Grade Band for Comparison Schools" %in% colnames(rc)) {
+                 `Grade Band for Comparison Schools`
+               } else {`Grade Band for Comparison`},
                school_type = `School Type`,
                school_enrollment = `School Enrollment`,
                district_enrollment = `District Enrollment`,
@@ -63,14 +69,28 @@ make_report_cards <- function() {
                per_open = `Percent Open Enrollment`,
                sch_ach = if ("School Student Achievement Score" %in% colnames(rc)) {
                  `School Student Achievement Score`
+               } else if ("Achievement Score" %in% colnames(rc)) {
+                 `Achievement Score`
                } else { `School Achievement Score` },
-               sch_ela_ach = `School ELA Achievement Score`,
-               sch_math_ach = `School Mathematics Achievement Score`,
+               sch_ela_ach = if ("School ELA Achievement Score" %in% colnames(rc)) {
+                 `School ELA Achievement Score`
+               } else { `ELA Achievement Score`},
+               sch_math_ach = if ("School Mathematics Achievement Score" %in% colnames(rc)) {
+                  `School Mathematics Achievement Score`
+               } else { `Mathematics Achievement Score`},
+               # sch_ela_ach = vars(contains("ELA Achievement Score")),
+               # sch_math_ach = vars(contains("Mathematics Achievement Score")),
                sch_growth = if ("School Student Growth Score" %in% colnames(rc)) {
                  `School Student Growth Score`
+               } else if ("Growth Score" %in% colnames(rc)) {
+                 `Growth Score`
                } else { `School Growth Score` },
-               sch_ela_growth = `School ELA Growth Score`,
-               sch_math_growth = `School Mathematics Growth Score`,
+               sch_ela_growth = if ("School ELA Growth Score" %in% colnames(rc)) {
+                 `School ELA Growth Score`
+               } else { `ELA Growth Score`},
+               sch_math_growth = if ("School Mathematics Growth Score" %in% colnames(rc)) {
+                 `School Mathematics Growth Score`
+               } else { `Mathematics Growth Score`},
                sch_cg = if ("School Closing Gaps Score" %in% colnames(rc)) {
                  `School Closing Gaps Score`
                } else { NA },
@@ -86,21 +106,33 @@ make_report_cards <- function() {
                
                sch_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
                  `School Target Group Outcomes Score`
+               } else if ("Target Group Outcomes Score" %in% colnames(rc)) {
+                 `Target Group Outcomes Score`
                } else { NA },
-               sch_ach_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_ach_tgo = if ("School Target Group Achievement Score" %in% colnames(rc)) {
                  `School Target Group Achievement Score`
+               } else if ("Target Group Achievement Score" %in% colnames(rc)) {
+                 `Target Group Achievement Score`
                } else { NA },
-               sch_growth_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_growth_tgo = if ("School Target Group Growth Score" %in% colnames(rc)) {
                  `School Target Group Growth Score`
+               } else if ("Target Group Growth Score" %in% colnames(rc)) {
+                 `Target Group Growth Score`
                } else { NA },
-               sch_absenteeism_tgo =if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_absenteeism_tgo =if ("School Target Group Chronic Absenteeism Score" %in% colnames(rc)) {
                  `School Target Group Chronic Absenteeism Score`
+               } else if ("Target Group Chronic Absenteeism Score" %in% colnames(rc)) {
+                 `Target Group Chronic Absenteeism Score`
                } else { NA },
-               sch_graduation_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_graduation_tgo = if ("School Target Group Graduation Score" %in% colnames(rc)) {
                  `School Target Group Graduation Score`
+               } else if ("Target Group Graduation Score" %in% colnames(rc)) {
+                 `Target Group Graduation Score`
                } else { NA },
-               sch_attendance_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_attendance_tgo = if ("School Target Group Attendance Score" %in% colnames(rc)) {
                  `School Target Group Attendance Score`
+               } else if ("Target Group Attendance Score" %in% colnames(rc)) {
+                 `Target Group Attendance Score`
                } else { NA },
                sch_4y_grad_gap = if("School 4 Year Graduation Gap Score" %in% colnames(rc)) {
                  `School 4 Year Graduation Gap Score`} else {NA},
@@ -111,18 +143,32 @@ make_report_cards <- function() {
                } else { NA },
                sch_ot = if ("School On-Track and Postsecondary Readiness Score" %in% colnames(rc)) {
                  `School On-Track and Postsecondary Readiness Score`
+               } else if ("On-Track to Graduation Score" %in% colnames(rc)) {
+                 `On-Track to Graduation Score`
                } else { `School On-Track to Graduation Score` },
-               sch_grad_rate = `School Graduation Rate Score`,
-               sch_att_rate = `School Attendance Rate Score`,
+               sch_grad_rate = if ("School Graduation Rate Score" %in% colnames(rc)) {
+                 `School Graduation Rate Score`
+               } else if ("Graduation Rate Score" %in% colnames(rc)) {
+                 `Graduation Rate Score`
+               } else { "Column not present." },
+               sch_att_rate = if ("School Attendance Rate Score" %in% colnames(rc)) {
+                 `School Attendance Rate Score`
+               } else if ("Attendance Rate Score" %in% colnames(rc)) {
+                 `Attendance Rate Score`
+               } else { "Column not present." },
                sch_3rd_ela = if ("School Third-Grade ELA Achievement Score" %in% colnames(rc)) {
                  `School Third-Grade ELA Achievement Score`
                } else if ("School 3rd Grade ELA Achievement Score" %in% colnames(rc)) {
                  `School 3rd Grade ELA Achievement Score`
+               } else if ("3rd Grade ELA Achievement Score" %in% colnames(rc)) {
+                 `3rd Grade ELA Achievement Score`
                } else { NA },
                sch_8th_math = if ("School Eighth-Grade Mathematics Achievement Score" %in% colnames(rc)) {
                  `School Eighth-Grade Mathematics Achievement Score`
                } else if ("School 8th Grade Mathematics Achievement Score" %in% colnames(rc)) {
                  `School 8th Grade Mathematics Achievement Score`
+               } else if ("8th Grade Mathematics Score" %in% colnames(rc)) {
+                 `8th Grade Mathematics Score`
                } else { NA },
                ach_weight = if("Score weighting Achievement Priority Area" %in% colnames(rc)) {
                  as.numeric(`Score weighting Achievement Priority Area`)} else {NA},
@@ -244,9 +290,15 @@ make_report_cards <- function() {
                school_name = `School Name`,
                overall_score = `Overall Accountability Score`,
                overall_rating = `Overall Accountability Rating`,
-               lowest_grade = `Lowest Grade in the School`,
-               highest_grade = `Highest Grade in the School`,
-               grade_band = `Grade Band for Comparison Schools`,
+               lowest_grade = if ("Lowest Grade Level" %in% colnames(rc)) {
+                 `Lowest Grade Level`
+               } else {`Lowest Grade in the School`},
+               highest_grade = if ("Highest Grade Level" %in% colnames(rc)) {
+                 `Highest Grade Level`
+               } else {`Highest Grade in the School`},
+               grade_band = if ("Grade Band for Comparison Schools" %in% colnames(rc)) {
+                 `Grade Band for Comparison Schools`
+               } else {`Grade Band for Comparison`},
                school_type = `School Type`,
                school_enrollment = `School Enrollment`,
                district_enrollment = `District Enrollment`,
@@ -268,14 +320,28 @@ make_report_cards <- function() {
                per_open = `Percent Open Enrollment`,
                sch_ach = if ("School Student Achievement Score" %in% colnames(rc)) {
                  `School Student Achievement Score`
+               } else if ("Achievement Score" %in% colnames(rc)) {
+                 `Achievement Score`
                } else { `School Achievement Score` },
-               sch_ela_ach = `School ELA Achievement Score`,
-               sch_math_ach = `School Mathematics Achievement Score`,
+               sch_ela_ach = if ("School ELA Achievement Score" %in% colnames(rc)) {
+                 `School ELA Achievement Score`
+               } else { `ELA Achievement Score`},
+               sch_math_ach = if ("School Mathematics Achievement Score" %in% colnames(rc)) {
+                 `School Mathematics Achievement Score`
+               } else { `Mathematics Achievement Score`},
+               # sch_ela_ach = vars(contains("ELA Achievement Score")),
+               # sch_math_ach = vars(contains("Mathematics Achievement Score")),
                sch_growth = if ("School Student Growth Score" %in% colnames(rc)) {
                  `School Student Growth Score`
+               } else if ("Growth Score" %in% colnames(rc)) {
+                 `Growth Score`
                } else { `School Growth Score` },
-               sch_ela_growth = `School ELA Growth Score`,
-               sch_math_growth = `School Mathematics Growth Score`,
+               sch_ela_growth = if ("School ELA Growth Score" %in% colnames(rc)) {
+                 `School ELA Growth Score`
+               } else { `ELA Growth Score`},
+               sch_math_growth = if ("School Mathematics Growth Score" %in% colnames(rc)) {
+                 `School Mathematics Growth Score`
+               } else { `Mathematics Growth Score`},
                sch_cg = if ("School Closing Gaps Score" %in% colnames(rc)) {
                  `School Closing Gaps Score`
                } else { NA },
@@ -291,21 +357,33 @@ make_report_cards <- function() {
                
                sch_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
                  `School Target Group Outcomes Score`
+               } else if ("Target Group Outcomes Score" %in% colnames(rc)) {
+                 `Target Group Outcomes Score`
                } else { NA },
-               sch_ach_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_ach_tgo = if ("School Target Group Achievement Score" %in% colnames(rc)) {
                  `School Target Group Achievement Score`
+               } else if ("Target Group Achievement Score" %in% colnames(rc)) {
+                 `Target Group Achievement Score`
                } else { NA },
-               sch_growth_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_growth_tgo = if ("School Target Group Growth Score" %in% colnames(rc)) {
                  `School Target Group Growth Score`
+               } else if ("Target Group Growth Score" %in% colnames(rc)) {
+                 `Target Group Growth Score`
                } else { NA },
-               sch_absenteeism_tgo =if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_absenteeism_tgo =if ("School Target Group Chronic Absenteeism Score" %in% colnames(rc)) {
                  `School Target Group Chronic Absenteeism Score`
+               } else if ("Target Group Chronic Absenteeism Score" %in% colnames(rc)) {
+                 `Target Group Chronic Absenteeism Score`
                } else { NA },
-               sch_graduation_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_graduation_tgo = if ("School Target Group Graduation Score" %in% colnames(rc)) {
                  `School Target Group Graduation Score`
+               } else if ("Target Group Graduation Score" %in% colnames(rc)) {
+                 `Target Group Graduation Score`
                } else { NA },
-               sch_attendance_tgo = if ("School Target Group Outcomes Score" %in% colnames(rc)) {
+               sch_attendance_tgo = if ("School Target Group Attendance Score" %in% colnames(rc)) {
                  `School Target Group Attendance Score`
+               } else if ("Target Group Attendance Score" %in% colnames(rc)) {
+                 `Target Group Attendance Score`
                } else { NA },
                sch_4y_grad_gap = if("School 4 Year Graduation Gap Score" %in% colnames(rc)) {
                  `School 4 Year Graduation Gap Score`} else {NA},
@@ -316,18 +394,32 @@ make_report_cards <- function() {
                } else { NA },
                sch_ot = if ("School On-Track and Postsecondary Readiness Score" %in% colnames(rc)) {
                  `School On-Track and Postsecondary Readiness Score`
+               } else if ("On-Track to Graduation Score" %in% colnames(rc)) {
+                 `On-Track to Graduation Score`
                } else { `School On-Track to Graduation Score` },
-               sch_grad_rate = `School Graduation Rate Score`,
-               sch_att_rate = `School Attendance Rate Score`,
+               sch_grad_rate = if ("School Graduation Rate Score" %in% colnames(rc)) {
+                 `School Graduation Rate Score`
+               } else if ("Graduation Rate Score" %in% colnames(rc)) {
+                 `Graduation Rate Score`
+               } else { "Column not present." },
+               sch_att_rate = if ("School Attendance Rate Score" %in% colnames(rc)) {
+                 `School Attendance Rate Score`
+               } else if ("Attendance Rate Score" %in% colnames(rc)) {
+                 `Attendance Rate Score`
+               } else { "Column not present." },
                sch_3rd_ela = if ("School Third-Grade ELA Achievement Score" %in% colnames(rc)) {
                  `School Third-Grade ELA Achievement Score`
                } else if ("School 3rd Grade ELA Achievement Score" %in% colnames(rc)) {
                  `School 3rd Grade ELA Achievement Score`
+               } else if ("3rd Grade ELA Achievement Score" %in% colnames(rc)) {
+                 `3rd Grade ELA Achievement Score`
                } else { NA },
                sch_8th_math = if ("School Eighth-Grade Mathematics Achievement Score" %in% colnames(rc)) {
                  `School Eighth-Grade Mathematics Achievement Score`
                } else if ("School 8th Grade Mathematics Achievement Score" %in% colnames(rc)) {
                  `School 8th Grade Mathematics Achievement Score`
+               } else if ("8th Grade Mathematics Score" %in% colnames(rc)) {
+                 `8th Grade Mathematics Score`
                } else { NA },
                ach_weight = if("Score weighting Achievement Priority Area" %in% colnames(rc)) {
                  as.numeric(`Score weighting Achievement Priority Area`)} else {NA},
