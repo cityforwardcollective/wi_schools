@@ -233,6 +233,10 @@ library(RSQLite)
                                         ifelse(is.na(city), 0,
                                                ifelse(city == "Milwaukee" & locale_description == "City", 1, # Gets rid of suburbs
                                                       ifelse(MPCP_percent > 0.749, 1, 0))))) %>% # For MPCP outside of district
+    # below handles Notre Dame's campus that is outside Milwaukee;
+    # choice counts aren't separated for each campus, so normal method 
+    # doesn't capture it
+    mutate(milwaukee_indicator = ifelse(dpi_true_id == "0000_1931", 1, milwaukee_indicator)) |> 
     select(-c(ALL_STUDENTS_count, MPCP_count))
   
   max_sy <- schools |> 
