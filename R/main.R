@@ -129,7 +129,11 @@ library(RSQLite)
     select(-school_name)
   
   others <- read_csv("imports/INST_NONI_2012_to_Current.csv", 
-                     name_repair = janitor::make_clean_names)
+                     name_repair = janitor::make_clean_names) |> 
+    mutate(district_code = str_pad(district_code, width = 4,
+                                   side = "left", pad = "0"),
+           school_code = str_pad(school_code, width = 4,
+                                 side = "left", pad = "0"))
   inst <- others |> 
     mutate(dpi_true_id = glue::glue("{district_code}_{school_code}"),
            school_year = glue::glue("{year - 1}-{str_extract(year, '[:digit:]{2}$')}")) |> 
