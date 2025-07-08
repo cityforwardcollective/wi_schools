@@ -9,11 +9,15 @@ library(wisconsink12)
 # GEOCODING
 
 files <- list.files("imports/school_dirs")
-do_files <- files[which(str_detect(files, "20231211"))]
+
+# just most recent year
+do_files <- files[which(str_detect(files, "20250708"))]
 
 dirs <- map_df(do_files, function(f) {
+  # construct file name
   fn <- paste0("imports/school_dirs/", f)
   
+  # get school year from file name
   date_f <- str_extract(f, "\\d{8}") |> 
     ymd()
   
@@ -22,6 +26,7 @@ dirs <- map_df(do_files, function(f) {
   } else {
     school_year <- glue("{year(date_f)}-{year(date_f)+1-2000}")
   }
+  
   
   d <- read_csv(fn, name_repair = janitor::make_clean_names) |> 
     mutate(school_year = school_year,
@@ -49,120 +54,133 @@ gc <- added |>
   geocode(address = address2,
           method = "arcgis")
 
-saveRDS(gc, "imports/wi_schools_geocoded_all_data_2023-24.rda")
-
-gc <- read_rds("imports/wi_schools_geocoded_all_data_2023-24.rda")
-
-# fix private schools
-gc <- gc |> 
-  mutate(dpi_true_id = case_when(
-    organization_type == "Private School" ~ str_replace(
-      dpi_true_id, "^\\d{4}", "0000"
-    ), 
-    TRUE ~ dpi_true_id))
-
-saveRDS(gc, "imports/wi_schools_geocoded_all_data_2023-24_good_ids.rda")
-
-gc |> 
-  filter(is.na(lat))
-
-gc |> 
+gc |>
   select(school_year,
          dpi_true_id,
          lat,
-         long) |> 
+         long,
+         address:county,
+         address2,
+         phone_number,
+         website_url,
+         email) |>
   saveRDS("imports/wi_schools_geocoded_2023-24.rda")
 
 
-# below was previous method
-# gc <- dirs |> 
-#   geocode(address = address, method = "census")
+# OLD CODE
+
+# gc <- read_rds("imports/wi_schools_geocoded_all_data_2023-24.rda")
 # 
-# missed <- gc |> 
+# # fix private schools
+# gc <- gc |> 
+#   mutate(dpi_true_id = case_when(
+#     organization_type == "Private School" ~ str_replace(
+#       dpi_true_id, "^\\d{4}", "0000"
+#     ), 
+#     TRUE ~ dpi_true_id))
+# 
+# saveRDS(gc, "imports/wi_schools_geocoded_all_data_2023-24_good_ids.rda")
+# 
+# gc |> 
 #   filter(is.na(lat))
 # 
-# gc1 <- gc
-# 
-# for (i in 1:5) {
-#   gc1 <- bind_rows(gc1 |> filter(!is.na(lat)),
-#                   gc1 |> 
-#                     filter(is.na(lat)) |> 
-#                     select(-c(lat, long)) |> 
-#                     geocode(address = address, method = "census"))
-# }
-# 
-# gc_osm <- gc1 |> 
-#   filter(is.na(lat)) |> 
-#   select(-c(lat, long)) |> 
-#   geocode(address = address, method = "osm")
-# 
-# gc_osm1 <- gc_osm
-# 
-# for (i in 1:5) {
-#   gc_osm1 <- bind_rows(gc_osm1 |> filter(!is.na(lat)),
-#                        gc_osm1 |> 
-#                      filter(is.na(lat)) |> 
-#                      select(-c(lat, long)) |> 
-#                      geocode(address = address, method = "census"))
-# }
-# 
-# again <- gc_osm1 |> 
-#   filter(is.na(lat)) |> 
-#   select(-c(lat, long)) |> 
-#   geocode_combine(queries = list(list(method = "arcgis")),
-#                   global_params = list(address = "address"))
-# 
-# nrow(again |> filter(is.na(lat)))
-# 
-# all <- gc1 |> 
-#   filter(!is.na(lat)) |> 
-#   bind_rows(gc_osm1) |> 
-#   filter(!is.na(lat)) |> 
-#   bind_rows(again)
-# 
-# length(unique(all$dpi_true_id))
-# sum(is.na(all$lat))
+# gc |>
+#   select(school_year,
+#          dpi_true_id,
+#          lat,
+#          long) |>
+#   saveRDS("imports/wi_schools_geocoded_2023-24.rda")
 # 
 # 
-# # VISUALIZING
-# 
-# hq <- left_join(all, wisconsink12::report_cards |> 
-#                   filter(school_year == "2021-22") |> 
-#                   select(dpi_true_id, overall_score)) |> 
-#   filter(overall_score >= 70.0)
-# 
-# 
-# all_sf <- st_as_sf(hq, coords = c("long", "lat"), crs = 4326)
-# 
-# mke <- st_read("../shapefiles/milwaukee_citylimit/citylimit.shp") 
-# 
-# all_sf <- st_transform(all_sf, crs = st_crs(mke))
-# 
-# wi <- spData::us_states |> 
-#   filter(NAME == "Wisconsin") |> 
-#   st_transform(crs = st_crs(all_sf))
-# 
-# sv <- voronoi(vect(all_sf$geometry)) |> 
-#   st_as_sf() 
-# 
-# sv <- st_intersection(st_transform(wi, st_crs(mke)), sv)
-# mke_int <- sv |> 
-#   st_intersects(mke)
-# 
-# ind <- map_dbl(mke_int, function(i) {
-#   if (length(i) > 0) {
-#     return(i)
-#   } else {
-#     return(0)
-#   }
-# })
-# 
-# dd <- sv[which(ind == 1),] |> 
-#   mutate(area = as.numeric(st_area(geometry)) / 2.788e7)
-# 
-# 
-# dd |> 
-#   ggplot() +
-#   geom_sf(aes(fill = area)) +
-#   geom_sf(data = mke, fill = NA, color = "red") +
-#   theme_void()
+# # below was previous method
+# # gc <- dirs |> 
+# #   geocode(address = address, method = "census")
+# # 
+# # missed <- gc |> 
+# #   filter(is.na(lat))
+# # 
+# # gc1 <- gc
+# # 
+# # for (i in 1:5) {
+# #   gc1 <- bind_rows(gc1 |> filter(!is.na(lat)),
+# #                   gc1 |> 
+# #                     filter(is.na(lat)) |> 
+# #                     select(-c(lat, long)) |> 
+# #                     geocode(address = address, method = "census"))
+# # }
+# # 
+# # gc_osm <- gc1 |> 
+# #   filter(is.na(lat)) |> 
+# #   select(-c(lat, long)) |> 
+# #   geocode(address = address, method = "osm")
+# # 
+# # gc_osm1 <- gc_osm
+# # 
+# # for (i in 1:5) {
+# #   gc_osm1 <- bind_rows(gc_osm1 |> filter(!is.na(lat)),
+# #                        gc_osm1 |> 
+# #                      filter(is.na(lat)) |> 
+# #                      select(-c(lat, long)) |> 
+# #                      geocode(address = address, method = "census"))
+# # }
+# # 
+# # again <- gc_osm1 |> 
+# #   filter(is.na(lat)) |> 
+# #   select(-c(lat, long)) |> 
+# #   geocode_combine(queries = list(list(method = "arcgis")),
+# #                   global_params = list(address = "address"))
+# # 
+# # nrow(again |> filter(is.na(lat)))
+# # 
+# # all <- gc1 |> 
+# #   filter(!is.na(lat)) |> 
+# #   bind_rows(gc_osm1) |> 
+# #   filter(!is.na(lat)) |> 
+# #   bind_rows(again)
+# # 
+# # length(unique(all$dpi_true_id))
+# # sum(is.na(all$lat))
+# # 
+# # 
+# # # VISUALIZING
+# # 
+# # hq <- left_join(all, wisconsink12::report_cards |> 
+# #                   filter(school_year == "2021-22") |> 
+# #                   select(dpi_true_id, overall_score)) |> 
+# #   filter(overall_score >= 70.0)
+# # 
+# # 
+# # all_sf <- st_as_sf(hq, coords = c("long", "lat"), crs = 4326)
+# # 
+# # mke <- st_read("../shapefiles/milwaukee_citylimit/citylimit.shp") 
+# # 
+# # all_sf <- st_transform(all_sf, crs = st_crs(mke))
+# # 
+# # wi <- spData::us_states |> 
+# #   filter(NAME == "Wisconsin") |> 
+# #   st_transform(crs = st_crs(all_sf))
+# # 
+# # sv <- voronoi(vect(all_sf$geometry)) |> 
+# #   st_as_sf() 
+# # 
+# # sv <- st_intersection(st_transform(wi, st_crs(mke)), sv)
+# # mke_int <- sv |> 
+# #   st_intersects(mke)
+# # 
+# # ind <- map_dbl(mke_int, function(i) {
+# #   if (length(i) > 0) {
+# #     return(i)
+# #   } else {
+# #     return(0)
+# #   }
+# # })
+# # 
+# # dd <- sv[which(ind == 1),] |> 
+# #   mutate(area = as.numeric(st_area(geometry)) / 2.788e7)
+# # 
+# # 
+# # dd |> 
+# #   ggplot() +
+# #   geom_sf(aes(fill = area)) +
+# #   geom_sf(data = mke, fill = NA, color = "red") +
+# #   theme_void()
