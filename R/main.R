@@ -80,7 +80,8 @@ library(RSQLite)
                    "2020-21",
                    "2021-22",
                    "2022-23",
-                   "2023-24")
+                   "2023-24",
+                   "2024-25")
   
   total_enrollment <- c(1266, 
                         1038, 
@@ -90,7 +91,8 @@ library(RSQLite)
                         429,
                         312,
                         217,
-                        155)
+                        155,
+                        102)
   
   chapter_220 <- tibble(school_year, total_enrollment, 
                         accurate_agency_type = "Chapter 220",
@@ -269,6 +271,15 @@ library(RSQLite)
     arrange(school_name, school_year)
   
   nrow(schools_rc) == nrow(schools)
+  
+  dupes <- schools |> 
+    group_by(school_year, dpi_true_id) |> 
+    count() |> 
+    filter(n > 1)
+  
+  if (nrow(dupes) > 0) {
+    stop("There is a duplicate school in the schools table.")
+  }
   
   # geocoded schools
   
