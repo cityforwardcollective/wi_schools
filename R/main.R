@@ -50,7 +50,8 @@ library(RSQLite)
     select(-c(school_name,
               district_name,
               locale_description,
-              city))
+              city,
+              agency_key))
   
   # WSAS
   
@@ -208,7 +209,7 @@ library(RSQLite)
   
   schools_rc <- schools_c %>%
     left_join(., rc_renamed %>% 
-                select(dpi_true_id, school_year, locale_description, city))
+                select(dpi_true_id, school_year, locale_description, city, agency_key))
   
   rc_years <- report_cards %>%
     .[["school_year"]] %>%

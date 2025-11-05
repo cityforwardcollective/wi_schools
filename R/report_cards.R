@@ -196,6 +196,9 @@ make_report_cards <- function() {
                school_code = str_replace(school_code, "[:alpha:]", ""),
                school_code = str_pad(school_code, 4, side = "left", pad = 0),
                dpi_true_id = paste(district_code, school_code, sep = "_"),
+               agency_key = if("DPI Agency Key" %in% colnames(rc)) {
+                 `DPI Agency Key`
+               } else {NA},
                overall_score = round(as.numeric(overall_score), 1),
                school_enrollment = as.numeric(school_enrollment),
                district_enrollment = as.numeric(district_enrollment),
@@ -272,7 +275,8 @@ make_report_cards <- function() {
                report_card_type,
                cg_redacted,
                test_participation_ela,
-               test_participation_math)
+               test_participation_math,
+               agency_key)
     }
     
     # Second conditional used for following loops.
@@ -447,7 +451,9 @@ make_report_cards <- function() {
                school_code = str_replace(school_code, "[:alpha:]", ""),
                school_code = str_pad(school_code, 4, side = "left", pad = 0),
                dpi_true_id = paste(district_code, school_code, sep = "_"),
-               overall_score = round(as.numeric(overall_score), 1),
+               agency_key = if("DPI Agency Key" %in% colnames(rc)) {
+                 `DPI Agency Key`
+               } else {NA},               overall_score = round(as.numeric(overall_score), 1),
                school_enrollment = as.numeric(school_enrollment),
                district_enrollment = as.numeric(district_enrollment),
                cg_redacted = ifelse(str_detect(sch_cg, "\\*"), 1, 0),
@@ -523,7 +529,8 @@ make_report_cards <- function() {
                report_card_type,
                cg_redacted,
                test_participation_ela,
-               test_participation_math)
+               test_participation_math,
+               agency_key)
       
     }
     rc_renamed <- bind_rows(rc_renamed, rc_other)
