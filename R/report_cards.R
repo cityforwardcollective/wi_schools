@@ -50,7 +50,11 @@ make_report_cards <- function() {
                } else {`Grade Band for Comparison`},
                school_type = `School Type`,
                school_enrollment = `School Enrollment`,
-               district_enrollment = `District Enrollment`,
+               district_enrollment = if ("District Enrollment" %in% colnames(rc)) {
+                 `District Enrollment`
+               } else if ("District/LEA Enrollment" %in% colnames(rc)) { 
+                 `District/LEA Enrollment`
+                } else { NA },
                per_am_in = `Percent American Indian or Alaskan Native`,
                per_asian = `Percent Asian`,
                per_b_aa = `Percent Black or African American`,
@@ -305,8 +309,11 @@ make_report_cards <- function() {
                } else {`Grade Band for Comparison`},
                school_type = `School Type`,
                school_enrollment = `School Enrollment`,
-               district_enrollment = `District Enrollment`,
-               per_am_in = `Percent American Indian or Alaskan Native`,
+               district_enrollment = if ("District Enrollment" %in% colnames(rc)) {
+                 `District Enrollment`
+               } else if ("District/LEA Enrollment" %in% colnames(rc)) { 
+                 `District/LEA Enrollment`
+               } else { NA },               per_am_in = `Percent American Indian or Alaskan Native`,
                per_asian = `Percent Asian`,
                per_b_aa = `Percent Black or African American`,
                per_hisp_lat = `Percent Hispanic/Latino`,
@@ -573,4 +580,8 @@ make_report_cards <- function() {
 }
 
 rc_renamed <- make_report_cards()
+
+# rc_renamed |> 
+#   group_by(school_year) |> 
+#   count()
 
