@@ -246,14 +246,19 @@ library(RSQLite)
     mutate(milwaukee_indicator = ifelse(dpi_true_id == "0000_1931", 1, milwaukee_indicator)) |> 
     select(-c(ALL_STUDENTS_count, MPCP_count))
   
+  # get most recent school year for charters
   max_sy <- schools |> 
     filter(school_year == max(school_year) & 
-             !accurate_agency_type %in% c("Private", "Traditional Public"))
+             !accurate_agency_type %in% c("Private", 
+                                          "Traditional Public",
+                                          "Instrumentality Charter"))
   
+  # extract which year that is
   year <- unique(max_sy$school_year) |> 
     str_extract(pattern = "\\d{4}") |> 
     as.numeric()
   
+  # get most previous school year for all mke schools
   ly_mke <- schools |> 
     filter(school_year ==  glue::glue("{year - 1}-{year-2000}") &
              milwaukee_indicator == 1) |> 
