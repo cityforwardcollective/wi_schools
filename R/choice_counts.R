@@ -11,7 +11,8 @@ make_choice_counts <- function() {
   choice_names <- read_csv("imports/choice_names.csv") %>%
     select(-ALL_STUDENTS_count)
   
-  files <- list.files(path = "imports/choice_counts")
+  # need to update choice names to handle the 2026-27 data
+  files <- list.files(path = "imports/choice_counts")[-11]
   
   choice_counts <- NULL
   
@@ -35,7 +36,20 @@ make_choice_counts <- function() {
                     select(-c(school_year, contains("count"))))
       
       
-      choice_counts <- bind_rows(choice_counts, cc)
+    } else if (str_detect(filename, "x$")) {
+      year <- str_extract(filename, "\\d{4}-\\d{2,4}")
+      
+      cc <- readxl::read_xlsx(filename, skip = 8) %>%
+        filter(!is.na(`...1`)) %>%
+        select("school_name" = `School Name`,
+               "MPCP_count" = `MPCP Student HC`,
+               "ALL_STUDENTS_count" = `Total\r\nAll\r\nStudent HC`) %>%
+        mutate(school_year = year) %>%
+        left_join(., choice_names %>% 
+                    filter(school_year == "2026-27") %>% 
+                    select(-c(school_year, contains("count"))))
+      
+      
     } else {
       
       cc <- readxl::read_xls(filename, skip = 4) %>%
@@ -50,9 +64,8 @@ make_choice_counts <- function() {
         left_join(., choice_names)
       
       
-      choice_counts <- bind_rows(choice_counts, cc)
     }
-    
+    choice_counts <- bind_rows(choice_counts, cc)
   }
   
   prev_max <- choice_names %>%
